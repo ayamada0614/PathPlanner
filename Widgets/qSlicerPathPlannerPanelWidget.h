@@ -28,6 +28,9 @@
 #include "qSlicerPathPlannerModuleWidgetsExport.h"
 
 class qSlicerPathPlannerPanelWidgetPrivate;
+class vtkObject;
+class vtkMRMLScene;
+class vtkMRMLNode;
 
 /// \ingroup Slicer_QtModules_PathPlanner
 class Q_SLICER_MODULE_PATHPLANNER_WIDGETS_EXPORT qSlicerPathPlannerPanelWidget
@@ -40,7 +43,7 @@ public:
   virtual ~qSlicerPathPlannerPanelWidget();
 
 protected slots:
-  //virtual void setMRMLScene(vtkMRMLScene *newScene);
+  virtual void setMRMLScene(vtkMRMLScene *newScene);
   
   //void deleteEntryPoints();
   //void deleteTargetPoints();

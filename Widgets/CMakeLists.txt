@@ -12,6 +12,8 @@ set(${KIT}_SRCS
   qSlicer${MODULE_NAME}FooBarWidget.h
   qSlicer${MODULE_NAME}PanelWidget.cxx
   qSlicer${MODULE_NAME}PanelWidget.h
+  #qSlicer${MODULE_NAME}TableModelPanelWidget.h
+  #qSlicer${MODULE_NAME}TableModelPanelWidget.cxx
   )
 
 set(${KIT}_MOC_SRCS

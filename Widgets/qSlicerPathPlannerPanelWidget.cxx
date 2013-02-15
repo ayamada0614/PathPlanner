@@ -22,6 +22,16 @@
 #include "qSlicerPathPlannerPanelWidget.h"
 #include "ui_qSlicerPathPlannerPanelWidget.h"
 
+#include <QDebug>
+#include <QList>
+#include <QTableWidgetSelectionRange>
+
+#include "qSlicerAbstractCoreModule.h"
+#include "qSlicerCoreApplication.h"
+#include "qSlicerModuleManager.h"
+#include "qSlicerApplication.h"
+#include "qSlicerCLIModule.h"
+
 #include "vtkObject.h"
 #include "vtkSmartPointer.h"
 #include "vtkMRMLInteractionNode.h"
@@ -29,6 +39,9 @@
 #include "vtkMRMLCommandLineModuleNode.h"
 #include "vtkMRMLAnnotationHierarchyNode.h"
 
+#include "vtkSlicerAnnotationModuleLogic.h"
+#include "qSlicerCoreApplication.h"
+#include "vtkSlicerCLIModuleLogic.h"
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_PathPlanner
@@ -43,6 +56,14 @@ public:
   qSlicerPathPlannerPanelWidgetPrivate(
     qSlicerPathPlannerPanelWidget& object);
   virtual void setupUi(qSlicerPathPlannerPanelWidget*);
+  
+  // Tables in "Entry Points" and "Target Points"
+  //qSlicerRegistrationFiducialsTableModel* EntryPointsTableModel;
+  //qSlicerRegistrationFiducialsTableModel* TargetPointsTableModel;
+  
+  // Pointer to Logic class of Annotations module to switch ActiveHierarchy node.
+  vtkSlicerAnnotationModuleLogic* AnnotationsLogic;
+  
 };
 
 // --------------------------------------------------------------------------
@@ -63,6 +84,7 @@ void qSlicerPathPlannerPanelWidgetPrivate
 //-----------------------------------------------------------------------------
 // qSlicerPathPlannerPanelWidget methods
 
+
 //-----------------------------------------------------------------------------
 qSlicerPathPlannerPanelWidget
 ::qSlicerPathPlannerPanelWidget(QWidget* parentWidget)
@@ -71,34 +93,47 @@ qSlicerPathPlannerPanelWidget
 {
   Q_D(qSlicerPathPlannerPanelWidget);
   d->setupUi(this);
+  
+  qSlicerAbstractCoreModule* annotationsModule = 
+    qSlicerCoreApplication::application()->moduleManager()->module("Annotations");
+  if (annotationsModule)
+  {
+    d->AnnotationsLogic =
+    vtkSlicerAnnotationModuleLogic::SafeDownCast(annotationsModule->logic());
+  }
+  
+  
 }
 
 //-----------------------------------------------------------------------------
-/*
+
 void qSlicerPathPlannerPanelWidget
 ::setMRMLScene(vtkMRMLScene *newScene)
 {
   Q_D(qSlicerPathPlannerPanelWidget);
   
-  if (d->ImagePointsAnnotationNodeSelector)
+  if (d->EntryPointsAnnotationNodeSelector)
   {
-    d->ImagePointsAnnotationNodeSelector->setMRMLScene(newScene);
+    d->EntryPointsAnnotationNodeSelector->setMRMLScene(newScene);
     // Listen for any new new fiducial points
     //this->qvtkReconnect(oldScene, newScene, vtkMRMLScene::NodeAddedEvent,
     //this, SLOT(onNodeAddedEvent(vtkObject*,vtkObject*)));
   }
-  if (d->PhysicalPointsAnnotationNodeSelector)
+  if (d->TargetPointsAnnotationNodeSelector)
   {
-    d->PhysicalPointsAnnotationNodeSelector->setMRMLScene(newScene);
+    d->TargetPointsAnnotationNodeSelector->setMRMLScene(newScene);
   }
-  if (d->ImagePointsTableModel)
+  /*
+  if (d->EntryPointsTableModel)
   {
-    d->ImagePointsTableModel->setMRMLScene(newScene);
+    d->EntryPointsTableModel->setMRMLScene(newScene);
   }
-  if (d->PhysicalPointsTableModel)
+  if (d->TargetPointsTableModel)
   {
-    d->PhysicalPointsTableModel->setMRMLScene(newScene);
+    d->TargetPointsTableModel->setMRMLScene(newScene);
   }
+   */
+  /*
   if (d->TrackerTransformNodeSelector)
   {
     d->TrackerTransformNodeSelector->setMRMLScene(newScene);
@@ -107,9 +142,9 @@ void qSlicerPathPlannerPanelWidget
   {
     d->OutputTransformNodeSelector->setMRMLScene(newScene);
   }
-  
+  */
 }
-*/
+
 
 //-----------------------------------------------------------------------------
 qSlicerPathPlannerPanelWidget
