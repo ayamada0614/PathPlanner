@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-// RegistrationFiducialsPanel Widgets includes
-#include "qSlicerRegistrationFiducialsTableModel.h"
+// PathPlannerPanel Widgets includes
+#include "qSlicerPathPlannerTableModel.h"
 
 #include "vtkMRMLAnnotationHierarchyNode.h"
 #include "vtkMRMLAnnotationFiducialNode.h"
@@ -33,16 +33,16 @@
 #include <map>
 #include <sstream>
 
-class Q_SLICER_MODULE_POINTBASEDPATIENTREGISTRATION_WIDGETS_EXPORT qSlicerRegistrationFiducialsTableModelPrivate
+class Q_SLICER_MODULE_PATHPLANNER_WIDGETS_EXPORT qSlicerPathPlannerTableModelPrivate
 {
-  Q_DECLARE_PUBLIC(qSlicerRegistrationFiducialsTableModel);
+  Q_DECLARE_PUBLIC(qSlicerPathPlannerTableModel);
  protected:
-  qSlicerRegistrationFiducialsTableModel * const q_ptr;
+  qSlicerPathPlannerTableModel * const q_ptr;
 
  public:
-  qSlicerRegistrationFiducialsTableModelPrivate(
-    qSlicerRegistrationFiducialsTableModel& object);
-  virtual ~qSlicerRegistrationFiducialsTableModelPrivate();
+  qSlicerPathPlannerTableModelPrivate(
+    qSlicerPathPlannerTableModel& object);
+  virtual ~qSlicerPathPlannerTableModelPrivate();
 
   void init();
   vtkMRMLAnnotationHierarchyNode* HierarchyNode;
@@ -52,9 +52,9 @@ class Q_SLICER_MODULE_POINTBASEDPATIENTREGISTRATION_WIDGETS_EXPORT qSlicerRegist
   
 };
 
-qSlicerRegistrationFiducialsTableModelPrivate
-::qSlicerRegistrationFiducialsTableModelPrivate(
-  qSlicerRegistrationFiducialsTableModel& object)
+qSlicerPathPlannerTableModelPrivate
+::qSlicerPathPlannerTableModelPrivate(
+  qSlicerPathPlannerTableModel& object)
   : q_ptr(&object)
 {
   this->HierarchyNode = NULL;
@@ -63,17 +63,17 @@ qSlicerRegistrationFiducialsTableModelPrivate
   this->Counter = 0;
 }
 
-qSlicerRegistrationFiducialsTableModelPrivate
-::~qSlicerRegistrationFiducialsTableModelPrivate()
+qSlicerPathPlannerTableModelPrivate
+::~qSlicerPathPlannerTableModelPrivate()
 {
-  //Q_D(qSlicerRegistrationFiducialsTableModel);
+  //Q_D(qSlicerPathPlannerTableModel);
 }
 
 
-void qSlicerRegistrationFiducialsTableModelPrivate
+void qSlicerPathPlannerTableModelPrivate
 ::init()
 {
-  Q_Q(qSlicerRegistrationFiducialsTableModel);
+  Q_Q(qSlicerPathPlannerTableModel);
 
   q->setColumnCount(4);
   q->setHorizontalHeaderLabels(QStringList()
@@ -87,34 +87,34 @@ void qSlicerRegistrationFiducialsTableModelPrivate
 }
 
 
-qSlicerRegistrationFiducialsTableModel
-::qSlicerRegistrationFiducialsTableModel(QObject *parent)
+qSlicerPathPlannerTableModel
+::qSlicerPathPlannerTableModel(QObject *parent)
   : QStandardItemModel(parent)
-  , d_ptr( new qSlicerRegistrationFiducialsTableModelPrivate(*this) )
+  , d_ptr( new qSlicerPathPlannerTableModelPrivate(*this) )
 {
-  Q_D(qSlicerRegistrationFiducialsTableModel);
+  Q_D(qSlicerPathPlannerTableModel);
   d->init();
 }
 
-qSlicerRegistrationFiducialsTableModel
-::~qSlicerRegistrationFiducialsTableModel()
+qSlicerPathPlannerTableModel
+::~qSlicerPathPlannerTableModel()
 {
 }
 
-qSlicerRegistrationFiducialsTableModel
-::qSlicerRegistrationFiducialsTableModel(qSlicerRegistrationFiducialsTableModelPrivate* pimpl, QObject *parent)
+qSlicerPathPlannerTableModel
+::qSlicerPathPlannerTableModel(qSlicerPathPlannerTableModelPrivate* pimpl, QObject *parent)
   : QStandardItemModel(parent)
   , d_ptr(pimpl)
 {
-  Q_D(qSlicerRegistrationFiducialsTableModel);
+  Q_D(qSlicerPathPlannerTableModel);
   d->init();
 }
 
 
-void qSlicerRegistrationFiducialsTableModel
+void qSlicerPathPlannerTableModel
 ::setNode(vtkMRMLNode* node)
 {
-  Q_D(qSlicerRegistrationFiducialsTableModel);
+  Q_D(qSlicerPathPlannerTableModel);
 
   if (node == NULL)
     {
@@ -183,10 +183,10 @@ void qSlicerRegistrationFiducialsTableModel
 
 
 //------------------------------------------------------------------------------
-void qSlicerRegistrationFiducialsTableModel
+void qSlicerPathPlannerTableModel
 ::setCoordinateLabel(int m)
 {
-  Q_D(qSlicerRegistrationFiducialsTableModel);
+  Q_D(qSlicerPathPlannerTableModel);
 
   QStringList list;
   
@@ -213,10 +213,10 @@ void qSlicerRegistrationFiducialsTableModel
 
 
 //------------------------------------------------------------------------------
-void qSlicerRegistrationFiducialsTableModel
+void qSlicerPathPlannerTableModel
 ::updateTable()
 {
-  Q_D(qSlicerRegistrationFiducialsTableModel);
+  Q_D(qSlicerPathPlannerTableModel);
 
   if (d->HierarchyNode == 0)
     {
@@ -262,7 +262,7 @@ void qSlicerRegistrationFiducialsTableModel
         }
       item->setText(fnode->GetName());
       //item->setData(QVariant(),Qt::SizeHintRole);
-      item->setData(fnode->GetID(),qSlicerRegistrationFiducialsTableModel::NodeIDRole);
+      item->setData(fnode->GetID(),qSlicerPathPlannerTableModel::NodeIDRole);
 
       for (int j = 0; j < 3; j ++)
         {
@@ -288,10 +288,10 @@ void qSlicerRegistrationFiducialsTableModel
 
 
 //-----------------------------------------------------------------------------
-void qSlicerRegistrationFiducialsTableModel
+void qSlicerPathPlannerTableModel
 ::addPoint(double x, double y, double z)
 {
-  Q_D(qSlicerRegistrationFiducialsTableModel);
+  Q_D(qSlicerPathPlannerTableModel);
 
   if (d->Scene && d->HierarchyNode)
     {
@@ -319,10 +319,10 @@ void qSlicerRegistrationFiducialsTableModel
 
 
 //-----------------------------------------------------------------------------
-void qSlicerRegistrationFiducialsTableModel
+void qSlicerPathPlannerTableModel
 ::setMRMLScene(vtkMRMLScene *newScene)
 {
-  Q_D(qSlicerRegistrationFiducialsTableModel);
+  Q_D(qSlicerPathPlannerTableModel);
 
   qvtkReconnect(d->Scene, newScene,
                 vtkMRMLScene::NodeRemovedEvent,
@@ -332,10 +332,10 @@ void qSlicerRegistrationFiducialsTableModel
 
 
 
-void qSlicerRegistrationFiducialsTableModel
+void qSlicerPathPlannerTableModel
 ::onItemChanged(QStandardItem * item)
 {
-  Q_D(qSlicerRegistrationFiducialsTableModel);
+  Q_D(qSlicerPathPlannerTableModel);
 
   if (item == this->invisibleRootItem())
     {
@@ -350,7 +350,7 @@ void qSlicerRegistrationFiducialsTableModel
   QStandardItem* nameItem = this->invisibleRootItem()->child(item->row(), 0);
   if (nameItem)
     {
-    QString id = nameItem->data(qSlicerRegistrationFiducialsTableModel::NodeIDRole).toString();
+    QString id = nameItem->data(qSlicerPathPlannerTableModel::NodeIDRole).toString();
 
     // Find fiducial node from item
     vtkNew<vtkCollection> collection;
@@ -407,10 +407,10 @@ void qSlicerRegistrationFiducialsTableModel
 }
 
 
-void qSlicerRegistrationFiducialsTableModel
+void qSlicerPathPlannerTableModel
 ::onMRMLChildNodeAdded(vtkObject* o)
 {
-  Q_D(qSlicerRegistrationFiducialsTableModel);
+  Q_D(qSlicerPathPlannerTableModel);
 
   // Find the newly added node
   vtkNew<vtkCollection> collection;
@@ -436,7 +436,7 @@ void qSlicerRegistrationFiducialsTableModel
   this->updateTable();
 }
 
-void qSlicerRegistrationFiducialsTableModel
+void qSlicerPathPlannerTableModel
 ::onMRMLChildNodeRemoved(vtkObject* o)
 {
   vtkMRMLNode* n = vtkMRMLNode::SafeDownCast(o);
@@ -453,10 +453,10 @@ void qSlicerRegistrationFiducialsTableModel
     }
 }
 
-void qSlicerRegistrationFiducialsTableModel
+void qSlicerPathPlannerTableModel
 ::onMRMLNodeRemovedEvent(vtkObject* caller, vtkObject* callData)
 {
-  Q_D(qSlicerRegistrationFiducialsTableModel);
+  Q_D(qSlicerPathPlannerTableModel);
 
   vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(caller);
   if (scene && d->Scene && scene == d->Scene)
@@ -465,10 +465,10 @@ void qSlicerRegistrationFiducialsTableModel
     }
 }
 
-void qSlicerRegistrationFiducialsTableModel
+void qSlicerPathPlannerTableModel
 ::onMRMLChildNodeValueModified(vtkObject* obj)
 {
-  Q_D(qSlicerRegistrationFiducialsTableModel);
+  Q_D(qSlicerPathPlannerTableModel);
 
   vtkMRMLAnnotationFiducialNode* fnode;
   fnode = vtkMRMLAnnotationFiducialNode::SafeDownCast(obj);

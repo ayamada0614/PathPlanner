@@ -26,6 +26,7 @@
 #include <QList>
 #include <QTableWidgetSelectionRange>
 
+#include "qSlicerPathPlannerTableModel.h"
 #include "qSlicerAbstractCoreModule.h"
 #include "qSlicerCoreApplication.h"
 #include "qSlicerModuleManager.h"
@@ -34,13 +35,14 @@
 
 #include "vtkObject.h"
 #include "vtkSmartPointer.h"
+#include "vtkMatrix4x4.h"
 #include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLCommandLineModuleNode.h"
 #include "vtkMRMLAnnotationHierarchyNode.h"
+#include "vtkMRMLLinearTransformNode.h"
 
 #include "vtkSlicerAnnotationModuleLogic.h"
-#include "qSlicerCoreApplication.h"
 #include "vtkSlicerCLIModuleLogic.h"
 
 //-----------------------------------------------------------------------------
@@ -56,14 +58,16 @@ public:
   qSlicerPathPlannerPanelWidgetPrivate(
     qSlicerPathPlannerPanelWidget& object);
   virtual void setupUi(qSlicerPathPlannerPanelWidget*);
+  vtkMRMLAnnotationHierarchyNode* createNewHierarchyNode(const char* basename);
   
   // Tables in "Entry Points" and "Target Points"
-  //qSlicerRegistrationFiducialsTableModel* EntryPointsTableModel;
-  //qSlicerRegistrationFiducialsTableModel* TargetPointsTableModel;
+  qSlicerPathPlannerTableModel* EntryPointsTableModel;
+  qSlicerPathPlannerTableModel* TargetPointsTableModel;
   
   // Pointer to Logic class of Annotations module to switch ActiveHierarchy node.
   vtkSlicerAnnotationModuleLogic* AnnotationsLogic;
   
+  QString OriginalAnnotationID;  
 };
 
 // --------------------------------------------------------------------------
@@ -72,6 +76,11 @@ qSlicerPathPlannerPanelWidgetPrivate
   qSlicerPathPlannerPanelWidget& object)
   : q_ptr(&object)
 {
+  this->EntryPointsTableModel = NULL;
+  this->TargetPointsTableModel = NULL;
+  //this->TrackerTransform = NULL;
+  this->AnnotationsLogic = NULL;
+  this->OriginalAnnotationID = "";  
 }
 
 // --------------------------------------------------------------------------
@@ -102,7 +111,6 @@ qSlicerPathPlannerPanelWidget
     vtkSlicerAnnotationModuleLogic::SafeDownCast(annotationsModule->logic());
   }
   
-  
 }
 
 //-----------------------------------------------------------------------------
@@ -111,6 +119,7 @@ void qSlicerPathPlannerPanelWidget
 ::setMRMLScene(vtkMRMLScene *newScene)
 {
   Q_D(qSlicerPathPlannerPanelWidget);
+  
   
   if (d->EntryPointsAnnotationNodeSelector)
   {
@@ -123,7 +132,7 @@ void qSlicerPathPlannerPanelWidget
   {
     d->TargetPointsAnnotationNodeSelector->setMRMLScene(newScene);
   }
-  /*
+  
   if (d->EntryPointsTableModel)
   {
     d->EntryPointsTableModel->setMRMLScene(newScene);
@@ -132,7 +141,6 @@ void qSlicerPathPlannerPanelWidget
   {
     d->TargetPointsTableModel->setMRMLScene(newScene);
   }
-   */
   /*
   if (d->TrackerTransformNodeSelector)
   {
@@ -143,6 +151,144 @@ void qSlicerPathPlannerPanelWidget
     d->OutputTransformNodeSelector->setMRMLScene(newScene);
   }
   */
+}
+
+
+//-----------------------------------------------------------------------------
+void qSlicerPathPlannerPanelWidget
+::enter()
+{
+  Q_D(qSlicerPathPlannerPanelWidget);
+  /*
+  if (d->PointsTabWidget)
+  {
+    int i = d->PointsTabWidget->currentIndex();
+    onTabSwitched(i);
+  }
+  */
+}
+
+
+//-----------------------------------------------------------------------------
+void qSlicerPathPlannerPanelWidget
+::setTargetPointsAnnotationNode(vtkMRMLNode* node)
+{
+  Q_D(qSlicerPathPlannerPanelWidget);
+  
+  vtkMRMLAnnotationHierarchyNode* hnode;
+  hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(node);
+  if (hnode)
+  {
+    d->AnnotationsLogic->SetActiveHierarchyNodeID(hnode->GetID());
+  }
+}
+
+
+//-----------------------------------------------------------------------------
+void qSlicerPathPlannerPanelWidget
+::setEntryPointsAnnotationNode(vtkMRMLNode* node)
+{
+  Q_D(qSlicerPathPlannerPanelWidget);
+  
+  vtkMRMLAnnotationHierarchyNode* hnode;
+  hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(node);
+  if (hnode)
+  {
+    d->AnnotationsLogic->SetActiveHierarchyNodeID(hnode->GetID());
+  }
+}
+
+
+//-----------------------------------------------------------------------------
+void qSlicerPathPlannerPanelWidget
+::deleteEntryPoints()
+{
+  Q_D(qSlicerPathPlannerPanelWidget);
+  if (d->EntryPointsAnnotationNodeSelector)
+  {
+    vtkMRMLAnnotationHierarchyNode* hnode;
+    hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(d->EntryPointsAnnotationNodeSelector->currentNode());
+    if (hnode)
+    {
+      hnode->RemoveChildrenNodes();
+      hnode->InvokeEvent(vtkMRMLAnnotationHierarchyNode::HierarchyModifiedEvent);
+    }
+  }
+}
+
+
+//-----------------------------------------------------------------------------
+void qSlicerPathPlannerPanelWidget
+::deleteTargetPoints()
+{
+  Q_D(qSlicerPathPlannerPanelWidget);
+  if (d->TargetPointsAnnotationNodeSelector)
+  {
+    vtkMRMLAnnotationHierarchyNode* hnode;
+    hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(d->TargetPointsAnnotationNodeSelector->currentNode());
+    if (hnode)
+    {
+      hnode->RemoveChildrenNodes();
+      hnode->InvokeEvent(vtkMRMLAnnotationHierarchyNode::HierarchyModifiedEvent);
+    }
+  }
+}
+
+
+//-----------------------------------------------------------------------------
+void qSlicerPathPlannerPanelWidget
+::addTargetPoint()
+{
+  Q_D(qSlicerPathPlannerPanelWidget);
+  if (/*d->TrackerTransform && */d->TargetPointsTableModel && d->AnnotationsLogic)
+  {
+    // Check the current active AnnotationHierarchy node.
+    // If it is different from the one specified in "Fiducials" menu,
+    // we switch the active node before adding a fiducial node. Once the node
+    // is added, we switch back to the original active node.
+    
+    //vtkMRMLAnnotationHierarchyNode* original = d->AnnotationsLogic->GetActiveHierarchyNodeID();
+    //vtkMRMLAnnotationHierarchyNode* current  = NULL;
+    std::string original = d->AnnotationsLogic->GetActiveHierarchyNodeID();
+    std::string current = "";
+    
+    if (original.compare("") != 0)
+    {
+      current = original;
+      vtkMRMLAnnotationHierarchyNode* hnode;
+      hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast
+      (d->TargetPointsAnnotationNodeSelector->currentNode());
+      if (hnode && original.compare(hnode->GetID()) != 0)
+      {
+        current = hnode->GetID();
+      }
+    }
+    else
+    {
+      vtkMRMLAnnotationHierarchyNode* hnode;
+      hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast
+      (d->TargetPointsAnnotationNodeSelector->currentNode());
+      if (hnode)
+      {
+        current = hnode->GetID();
+      }
+    }
+    if (current.compare("") != 0)
+    {
+      // Switch the active hierarchy node
+      d->AnnotationsLogic->SetActiveHierarchyNodeID(current.c_str());
+      
+      // Add a new fiducial node to the active hierarchy
+      vtkSmartPointer< vtkMatrix4x4 > matrix = vtkSmartPointer< vtkMatrix4x4 >::New();
+      //d->TrackerTransform->GetMatrixTransformToWorld(matrix);
+      d->TargetPointsTableModel->addPoint(matrix->Element[0][3],
+                                            matrix->Element[1][3],
+                                            matrix->Element[2][3]);
+      
+      // Switch the active hierarchy node to the original
+      d->AnnotationsLogic->SetActiveHierarchyNodeID(original.c_str());
+    }
+  }
 }
 
 

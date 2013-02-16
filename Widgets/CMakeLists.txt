@@ -12,13 +12,14 @@ set(${KIT}_SRCS
   qSlicer${MODULE_NAME}FooBarWidget.h
   qSlicer${MODULE_NAME}PanelWidget.cxx
   qSlicer${MODULE_NAME}PanelWidget.h
-  #qSlicer${MODULE_NAME}TableModelPanelWidget.h
-  #qSlicer${MODULE_NAME}TableModelPanelWidget.cxx
+  qSlicer${MODULE_NAME}TableModel.h
+  qSlicer${MODULE_NAME}TableModel.cxx
   )
 
 set(${KIT}_MOC_SRCS
   qSlicer${MODULE_NAME}FooBarWidget.h
   qSlicer${MODULE_NAME}PanelWidget.h
+  qSlicer${MODULE_NAME}TableModel.h
   )
 
 set(${KIT}_UI_SRCS
@@ -32,6 +33,8 @@ set(${KIT}_RESOURCES
   )
 
 set(${KIT}_TARGET_LIBRARIES
+  vtkSlicerAnnotationsModuleMRML
+  vtkSlicerAnnotationsModuleLogic
   vtkSlicer${MODULE_NAME}ModuleLogic
   )
 

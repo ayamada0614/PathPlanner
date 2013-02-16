@@ -23,8 +23,9 @@
 
 // Qt includes
 #include <QWidget>
+#include <ctkVTKObject.h>
 
-// Panel Widgets includes
+// PathPlannerPanel Widgets includes
 #include "qSlicerPathPlannerModuleWidgetsExport.h"
 
 class qSlicerPathPlannerPanelWidgetPrivate;
@@ -37,17 +38,22 @@ class Q_SLICER_MODULE_PATHPLANNER_WIDGETS_EXPORT qSlicerPathPlannerPanelWidget
   : public QWidget
 {
   Q_OBJECT
+  QVTK_OBJECT  
 public:
   typedef QWidget Superclass;
   qSlicerPathPlannerPanelWidget(QWidget *parent=0);
   virtual ~qSlicerPathPlannerPanelWidget();
 
-protected slots:
+public slots:
   virtual void setMRMLScene(vtkMRMLScene *newScene);
+  void setEntryPointsAnnotationNode(vtkMRMLNode*);  
+  void setTargetPointsAnnotationNode(vtkMRMLNode*);
+  void enter();  
   
-  //void deleteEntryPoints();
-  //void deleteTargetPoints();
-  //void addTargetPoint();
+protected slots:
+  void deleteEntryPoints();
+  void deleteTargetPoints();
+  void addTargetPoint();
   
 protected:
   QScopedPointer<qSlicerPathPlannerPanelWidgetPrivate> d_ptr;

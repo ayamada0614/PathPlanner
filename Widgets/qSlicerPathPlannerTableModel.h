@@ -27,14 +27,14 @@
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
 
-#include "qSlicerPointBasedPatientRegistrationModuleWidgetsExport.h"
+#include "qSlicerPathPlannerModuleWidgetsExport.h"
 
 class vtkObject;
 class vtkMRMLNode;
 class vtkMRMLScene;
 class qSlicerPathPlannerTableModelPrivate;
 
-class Q_SLICER_MODULE_POINTBASEDPATIENTREGISTRATION_WIDGETS_EXPORT qSlicerPathPlannerTableModel
+class Q_SLICER_MODULE_PATHPLANNER_WIDGETS_EXPORT qSlicerPathPlannerTableModel
 //  : public QAbstractTableModel
   : public QStandardItemModel
 {
