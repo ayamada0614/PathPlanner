@@ -70,14 +70,14 @@ QString qSlicerPathPlannerModule::helpText()const
 //-----------------------------------------------------------------------------
 QString qSlicerPathPlannerModule::acknowledgementText()const
 {
-  return "This work was was partially funded by NIH grant 3P41RR013218-12S1";
+  return "This work was partially funded by NCIGT";
 }
 
 //-----------------------------------------------------------------------------
 QStringList qSlicerPathPlannerModule::contributors()const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("Jean-Christophe Fillion-Robin (Kitware)");
+  moduleContributors << QString("Atsushi Yamada PhD (Brigham and Women's Hospital and Harvard Medical School)");
   return moduleContributors;
 }
 

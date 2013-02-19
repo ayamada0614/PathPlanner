@@ -54,6 +54,8 @@ protected slots:
   void deleteEntryPoints();
   void deleteTargetPoints();
   void addTargetPoint();
+  void entryPointToolBarClicked(QAction*);
+  void addEntryPointButtonClicked();
   
 protected:
   QScopedPointer<qSlicerPathPlannerPanelWidgetPrivate> d_ptr;

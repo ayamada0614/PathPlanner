@@ -33,6 +33,10 @@
 #include "qSlicerApplication.h"
 #include "qSlicerCLIModule.h"
 
+// SlicerLogic includes
+#include <vtkSlicerApplicationLogic.h>
+#include "qSlicerMouseModeToolBar.h"
+
 #include "vtkObject.h"
 #include "vtkSmartPointer.h"
 #include "vtkMatrix4x4.h"
@@ -90,6 +94,32 @@ void qSlicerPathPlannerPanelWidgetPrivate
   this->Ui_qSlicerPathPlannerPanelWidget::setupUi(widget);
 }
 
+
+//-----------------------------------------------------------------------------
+vtkMRMLAnnotationHierarchyNode* qSlicerPathPlannerPanelWidgetPrivate
+::createNewHierarchyNode(const char* basename)
+{
+  // NOTE: this method has to be called after setting AnnotationLogic;
+  if (this->AnnotationsLogic)
+  {
+    vtkMRMLScene * scene = qSlicerCoreApplication::application()->mrmlScene();
+    QString parentNodeID = this->AnnotationsLogic->GetTopLevelHierarchyNodeID();
+    vtkMRMLAnnotationHierarchyNode* newnode
+    = vtkMRMLAnnotationHierarchyNode::New();
+    scene->AddNode(newnode);
+    newnode->HideFromEditorsOff();
+    newnode->SetName(scene->GetUniqueNameByString(basename));
+    newnode->SetParentNodeID(parentNodeID.toLatin1());
+    this->AnnotationsLogic->AddDisplayNodeForHierarchyNode(newnode);
+    return newnode;
+  }
+  else
+  {
+    return NULL;
+  }
+}
+
+
 //-----------------------------------------------------------------------------
 // qSlicerPathPlannerPanelWidget methods
 
@@ -109,6 +139,121 @@ qSlicerPathPlannerPanelWidget
   {
     d->AnnotationsLogic =
     vtkSlicerAnnotationModuleLogic::SafeDownCast(annotationsModule->logic());
+  }
+  vtkMRMLScene * scene = qSlicerCoreApplication::application()->mrmlScene();
+
+  d->EntryPointsTableModel    = new qSlicerPathPlannerTableModel(this);
+  d->TargetPointsTableModel = new qSlicerPathPlannerTableModel(this);
+  
+  d->EntryPointsTableModel->setCoordinateLabel(qSlicerPathPlannerTableModel::LABEL_RAS);
+  d->TargetPointsTableModel->setCoordinateLabel(qSlicerPathPlannerTableModel::LABEL_RAS);
+  
+  d->EntryPointsTable->setModel(d->EntryPointsTableModel);
+  d->TargetPointsTable->setModel(d->TargetPointsTableModel);
+ 
+  if (d->EntryPointsAnnotationNodeSelector)
+  {
+    d->EntryPointsTableModel->setMRMLScene(d->EntryPointsAnnotationNodeSelector->mrmlScene());
+    connect(d->EntryPointsAnnotationNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+            d->EntryPointsTableModel, SLOT(setNode(vtkMRMLNode*)));
+    connect(d->EntryPointsAnnotationNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+            this, SLOT(setEntryPointsAnnotationNode(vtkMRMLNode*)));
+    if (scene)
+    {
+      d->EntryPointsAnnotationNodeSelector->setMRMLScene(scene);
+      // Create a new hierarchy node
+      vtkMRMLAnnotationHierarchyNode* node = d->createNewHierarchyNode("EntryPoint");
+      if (node)
+      {
+        d->EntryPointsAnnotationNodeSelector->setCurrentNode(node);
+        // test code
+        d->EntryPointsAnnotationNodeSelector->currentNode();          
+        node->Delete();
+      }
+    }
+  }
+  if (d->TargetPointsAnnotationNodeSelector)
+  {
+    d->TargetPointsTableModel->setMRMLScene(d->TargetPointsAnnotationNodeSelector->mrmlScene());
+    connect(d->TargetPointsAnnotationNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+            d->TargetPointsTableModel, SLOT(setNode(vtkMRMLNode*)));
+    connect(d->EntryPointsAnnotationNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+            this, SLOT(setTargetPointsAnnotationNode(vtkMRMLNode*)));
+    if (scene)
+    {
+      d->TargetPointsAnnotationNodeSelector->setMRMLScene(scene);
+      // Create a new hierarchy node
+      vtkMRMLAnnotationHierarchyNode* node = d->createNewHierarchyNode("TargetPoint");
+      if (node)
+      {
+        d->TargetPointsAnnotationNodeSelector->setCurrentNode(node);
+        // test code
+        d->TargetPointsAnnotationNodeSelector->currentNode();          
+        node->Delete();
+      }
+    }
+  }
+  if (d->DeleteEntryPointsButton)
+  {
+    connect(d->DeleteEntryPointsButton, SIGNAL(clicked()),
+            this, SLOT(deleteEntryPoints()));
+  }
+  if (d->DeleteTargetPointsButton)
+  {
+    connect(d->DeleteTargetPointsButton, SIGNAL(clicked()),
+            this, SLOT(deleteTargetPoints()));
+  }
+/*
+  if (d->AddTargetPointButton)
+  {
+    connect(d->AddTargetPointButton, SIGNAL(clicked()),
+            this, SLOT(addTargetPoint()));
+  }
+*/ 
+/*
+  if (d->TrackerTransformNodeSelector)
+  {
+    connect(d->TrackerTransformNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+            this, SLOT(setTrackerTransform(vtkMRMLNode*)));
+  }
+*/
+
+  //if(d->AddEntryPointButton)
+  //{
+  //  connect(d->AddEntryPointButton, SIGNAL(clicked()),
+  //        this, SLOT(addEntryPointButtonClicked()));
+    
+    //connect(d->AddEntryPointButton, SIGNAL(clicked()),
+    //        d->AddEntryPointToolBar, SLOT(switchPlaceMode()));
+    //connect(d->AddEntryPointButton, SIGNAL(clicked()),
+    //        d->AddEntryPointToolBar, SLOT(switchToViewTransformMode()));
+  //}
+   
+  if (d->AddEntryPointToolBar)
+  {
+    d->AddEntryPointToolBar->setApplicationLogic(
+                                             qSlicerApplication::application()->applicationLogic());
+    d->AddEntryPointToolBar->setMRMLScene(qSlicerApplication::application()->mrmlScene());
+    QObject::connect(qSlicerApplication::application(),
+                     SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+                     d->AddEntryPointToolBar,
+                     SLOT(setMRMLScene(vtkMRMLScene*)));
+    // change current annotationhierarchy node
+    QObject::connect(d->AddEntryPointToolBar,SIGNAL(actionTriggered(QAction*)),
+                     this,SLOT(entryPointToolBarClicked(QAction*)));
+  }
+  if (d->AddTargetPointToolBar)
+  {
+    d->AddTargetPointToolBar->setApplicationLogic(
+                                                 qSlicerApplication::application()->applicationLogic());
+    d->AddTargetPointToolBar->setMRMLScene(qSlicerApplication::application()->mrmlScene());
+    QObject::connect(qSlicerApplication::application(),
+                     SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+                     d->AddTargetPointToolBar,
+                     SLOT(setMRMLScene(vtkMRMLScene*)));
+    // change current annotationhierarchy node
+    //QObject::connect(d->PointsTabWidget,SIGNAL(currentChanged(int)),
+    //                 this,SLOT(onTabSwitched(int)));
   }
   
 }
@@ -291,6 +436,39 @@ void qSlicerPathPlannerPanelWidget
   }
 }
 
+
+//-----------------------------------------------------------------------------
+void qSlicerPathPlannerPanelWidget
+::entryPointToolBarClicked(QAction*)
+{
+  std::cout << "entryPointToolBarClicked()" << std::endl;
+}
+
+
+
+//-----------------------------------------------------------------------------
+void qSlicerPathPlannerPanelWidget
+::addEntryPointButtonClicked()
+{
+  Q_D(qSlicerPathPlannerPanelWidget);
+  //d->AddEntryPointButton->setText(tr("Add Entry Point ON"));
+  std::cout << "addEntryPointButtonClicked()" << std::endl;
+  
+  
+  vtkMRMLAnnotationHierarchyNode* hnode = NULL;
+  hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast
+  (d->EntryPointsAnnotationNodeSelector->currentNode());
+  if (hnode)
+  {
+    d->AnnotationsLogic->SetActiveHierarchyNodeID(hnode->GetID());
+    std::cout << "addEntryPointButtonClicked()" << std::endl;
+  }
+  
+  //vtkMRMLInteractionNode * interactionNode = d->AddEntryPointToolBar->SwitchToSinglePlaceMode();//->GetInteractionNode();
+  
+  //QAction *thisAction = d->AddEntryPointToolBar->MRMLAppLogic->menu()->activeAction();
+  
+}
 
 //-----------------------------------------------------------------------------
 qSlicerPathPlannerPanelWidget
