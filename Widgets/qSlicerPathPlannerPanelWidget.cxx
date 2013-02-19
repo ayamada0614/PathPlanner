@@ -218,16 +218,16 @@ qSlicerPathPlannerPanelWidget
   }
 */
 
-  //if(d->AddEntryPointButton)
-  //{
-  //  connect(d->AddEntryPointButton, SIGNAL(clicked()),
-  //        this, SLOT(addEntryPointButtonClicked()));
+  if(d->AddEntryPointButton)
+  {
+    connect(d->AddEntryPointButton, SIGNAL(clicked()),
+          this, SLOT(addEntryPointButtonClicked()));
     
-    //connect(d->AddEntryPointButton, SIGNAL(clicked()),
-    //        d->AddEntryPointToolBar, SLOT(switchPlaceMode()));
+    connect(d->AddEntryPointButton, SIGNAL(clicked()),
+            d->AddEntryPointToolBar, SLOT(switchPlaceMode()));
     //connect(d->AddEntryPointButton, SIGNAL(clicked()),
     //        d->AddEntryPointToolBar, SLOT(switchToViewTransformMode()));
-  //}
+  }
    
   if (d->AddEntryPointToolBar)
   {
@@ -451,7 +451,7 @@ void qSlicerPathPlannerPanelWidget
 ::addEntryPointButtonClicked()
 {
   Q_D(qSlicerPathPlannerPanelWidget);
-  //d->AddEntryPointButton->setText(tr("Add Entry Point ON"));
+  d->AddEntryPointButton->setText(tr("Add Entry Point ON"));
   std::cout << "addEntryPointButtonClicked()" << std::endl;
   
   

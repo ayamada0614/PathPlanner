@@ -54,6 +54,13 @@
      <item>
       <layout class="QHBoxLayout" name="EntryPointAddRemoveLayout">
        <item>
+        <widget class="QPushButton" name="AddEntryPointButton">
+         <property name="text">
+          <string>Add Entry Point OFF</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="qSlicerMouseModeToolBar" name="AddEntryPointToolBar"/>
        </item>
        <item>
