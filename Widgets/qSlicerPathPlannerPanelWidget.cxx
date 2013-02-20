@@ -193,16 +193,38 @@ qSlicerPathPlannerPanelWidget
       }
     }
   }
-  if (d->DeleteEntryPointsButton)
+  
+  if (d->ListClear)
   {
-    connect(d->DeleteEntryPointsButton, SIGNAL(clicked()),
+    connect(d->ListClear, SIGNAL(clicked()),
             this, SLOT(deleteEntryPoints()));
+    connect(d->ListClear, SIGNAL(clicked()),
+            this, SLOT(deleteTargetPoints()));
   }
+  
+  if (d->EntryPointListSelector && d->TargetPointListSelector)
+  {
+    /*
+    connect(d->EntryPointListSelector, SIGNAL(released()),
+            d->TargetPointListSelector, SLOT(released()));
+    connect(d->TargetPointListSelector, SIGNAL(released()),
+            d->EntryPointListSelector, SLOT(toggle()));
+     */
+    //connect(d->EntryPointListSelector, SIGNAL(released()),
+    //        d->TargetPointListSelector, SIGNAL(clicked()));
+    connect(d->TargetPointListSelector, SIGNAL(released()),
+            d->EntryPointListSelector, SLOT(toggle()));
+    connect(d->EntryPointListSelector, SIGNAL(released()),
+            d->TargetPointListSelector, SLOT(toggle()));
+  }
+  /*
   if (d->DeleteTargetPointsButton)
   {
     connect(d->DeleteTargetPointsButton, SIGNAL(clicked()),
             this, SLOT(deleteTargetPoints()));
   }
+   */
+  
 /*
   if (d->AddTargetPointButton)
   {
@@ -217,7 +239,7 @@ qSlicerPathPlannerPanelWidget
             this, SLOT(setTrackerTransform(vtkMRMLNode*)));
   }
 */
-
+/*
   if(d->AddEntryPointButton)
   {
     connect(d->AddEntryPointButton, SIGNAL(clicked()),
@@ -228,20 +250,22 @@ qSlicerPathPlannerPanelWidget
     //connect(d->AddEntryPointButton, SIGNAL(clicked()),
     //        d->AddEntryPointToolBar, SLOT(switchToViewTransformMode()));
   }
-   
-  if (d->AddEntryPointToolBar)
+*/   
+  
+  if (d->AddPointToolBar)
   {
-    d->AddEntryPointToolBar->setApplicationLogic(
+    d->AddPointToolBar->setApplicationLogic(
                                              qSlicerApplication::application()->applicationLogic());
-    d->AddEntryPointToolBar->setMRMLScene(qSlicerApplication::application()->mrmlScene());
+    d->AddPointToolBar->setMRMLScene(qSlicerApplication::application()->mrmlScene());
     QObject::connect(qSlicerApplication::application(),
                      SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                     d->AddEntryPointToolBar,
+                     d->AddPointToolBar,
                      SLOT(setMRMLScene(vtkMRMLScene*)));
     // change current annotationhierarchy node
-    QObject::connect(d->AddEntryPointToolBar,SIGNAL(actionTriggered(QAction*)),
+    QObject::connect(d->AddPointToolBar,SIGNAL(actionTriggered(QAction*)),
                      this,SLOT(entryPointToolBarClicked(QAction*)));
   }
+  /*
   if (d->AddTargetPointToolBar)
   {
     d->AddTargetPointToolBar->setApplicationLogic(
@@ -255,7 +279,7 @@ qSlicerPathPlannerPanelWidget
     //QObject::connect(d->PointsTabWidget,SIGNAL(currentChanged(int)),
     //                 this,SLOT(onTabSwitched(int)));
   }
-  
+  */
 }
 
 //-----------------------------------------------------------------------------
@@ -451,7 +475,7 @@ void qSlicerPathPlannerPanelWidget
 ::addEntryPointButtonClicked()
 {
   Q_D(qSlicerPathPlannerPanelWidget);
-  d->AddEntryPointButton->setText(tr("Add Entry Point ON"));
+  //d->AddEntryPointButton->setText(tr("Add Entry Point ON"));
   std::cout << "addEntryPointButtonClicked()" << std::endl;
   
   
