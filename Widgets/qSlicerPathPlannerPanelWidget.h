@@ -28,6 +28,9 @@
 // PathPlannerPanel Widgets includes
 #include "qSlicerPathPlannerModuleWidgetsExport.h"
 
+#define SELECTENTRYPOINTLIST 0
+#define SELECTTARGETPOINTLIST 2
+
 class qSlicerPathPlannerPanelWidgetPrivate;
 class vtkObject;
 class vtkMRMLScene;
@@ -43,13 +46,14 @@ public:
   typedef QWidget Superclass;
   qSlicerPathPlannerPanelWidget(QWidget *parent=0);
   virtual ~qSlicerPathPlannerPanelWidget();
+  int toggleSwitchFlag;
 
 public slots:
   virtual void setMRMLScene(vtkMRMLScene *newScene);
   void setEntryPointsAnnotationNode(vtkMRMLNode*);  
   void setTargetPointsAnnotationNode(vtkMRMLNode*);
   void enter();  
-  
+    
 protected slots:
   void deleteEntryPoints();
   void deleteTargetPoints();

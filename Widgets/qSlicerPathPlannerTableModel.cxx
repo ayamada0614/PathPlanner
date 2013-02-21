@@ -45,6 +45,8 @@ class Q_SLICER_MODULE_PATHPLANNER_WIDGETS_EXPORT qSlicerPathPlannerTableModelPri
   virtual ~qSlicerPathPlannerTableModelPrivate();
 
   void init();
+  void initForEntryList();
+  void initForTargetList();
   vtkMRMLAnnotationHierarchyNode* HierarchyNode;
   int PendingItemModified; // -1 means not updating
   vtkMRMLScene* Scene;
@@ -87,6 +89,40 @@ void qSlicerPathPlannerTableModelPrivate
 
 }
 
+void qSlicerPathPlannerTableModelPrivate
+::initForEntryList()
+{
+  Q_Q(qSlicerPathPlannerTableModel);
+  
+  q->setColumnCount(4);
+  q->setHorizontalHeaderLabels(QStringList()
+                               << "Entry Point"
+                               << "R"
+                               << "A"
+                               << "S"
+                               << "Time");
+  QObject::connect(q, SIGNAL(itemChanged(QStandardItem*)),
+                   q, SLOT(onItemChanged(QStandardItem*)));
+  
+}
+
+void qSlicerPathPlannerTableModelPrivate
+::initForTargetList()
+{
+  Q_Q(qSlicerPathPlannerTableModel);
+  
+  q->setColumnCount(4);
+  q->setHorizontalHeaderLabels(QStringList()
+                               << "Target Point"
+                               << "R"
+                               << "A"
+                               << "S"
+                               << "Time");
+  QObject::connect(q, SIGNAL(itemChanged(QStandardItem*)),
+                   q, SLOT(onItemChanged(QStandardItem*)));
+  
+}
+
 
 qSlicerPathPlannerTableModel
 ::qSlicerPathPlannerTableModel(QObject *parent)
@@ -109,6 +145,32 @@ qSlicerPathPlannerTableModel
 {
   Q_D(qSlicerPathPlannerTableModel);
   d->init();
+}
+
+void qSlicerPathPlannerTableModel
+::initList(int i)
+{
+  Q_D(qSlicerPathPlannerTableModel);
+
+  switch (i)
+  {
+    case LABEL_RAS_ENTRY:
+    {
+      d->initForEntryList();  
+      break;
+    }
+    case LABEL_RAS_TARGET:
+    {
+      d->initForTargetList();  
+      break;
+    }
+    default:
+    {
+      d->init();  
+      break;
+    }
+  }
+  
 }
 
 
@@ -196,6 +258,16 @@ void qSlicerPathPlannerTableModel
     case LABEL_RAS:
       {
       list << "Point Name" << "R" << "A" << "S" << "Time";
+      break;
+      }
+    case LABEL_RAS_ENTRY:
+      {
+      list << "Entry Point" << "R" << "A" << "S" << "Time";
+      break;
+      }
+    case LABEL_RAS_TARGET:
+      {
+      list << "Target Point" << "R" << "A" << "S" << "Time";
       break;
       }
     case LABEL_XYZ:

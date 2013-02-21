@@ -133,6 +133,8 @@ qSlicerPathPlannerPanelWidget
   Q_D(qSlicerPathPlannerPanelWidget);
   d->setupUi(this);
   
+  this->toggleSwitchFlag = SELECTENTRYPOINTLIST; 
+  
   qSlicerAbstractCoreModule* annotationsModule = 
     qSlicerCoreApplication::application()->moduleManager()->module("Annotations");
   if (annotationsModule)
@@ -142,11 +144,12 @@ qSlicerPathPlannerPanelWidget
   }
   vtkMRMLScene * scene = qSlicerCoreApplication::application()->mrmlScene();
 
-  d->EntryPointsTableModel    = new qSlicerPathPlannerTableModel(this);
+  d->EntryPointsTableModel  = new qSlicerPathPlannerTableModel(this);
+  d->EntryPointsTableModel->initList(qSlicerPathPlannerTableModel::LABEL_RAS_ENTRY);
   d->TargetPointsTableModel = new qSlicerPathPlannerTableModel(this);
-  
-  d->EntryPointsTableModel->setCoordinateLabel(qSlicerPathPlannerTableModel::LABEL_RAS);
-  d->TargetPointsTableModel->setCoordinateLabel(qSlicerPathPlannerTableModel::LABEL_RAS);
+  d->TargetPointsTableModel->initList(qSlicerPathPlannerTableModel::LABEL_RAS_TARGET);
+  d->EntryPointsTableModel->setCoordinateLabel(qSlicerPathPlannerTableModel::LABEL_RAS_ENTRY);
+  d->TargetPointsTableModel->setCoordinateLabel(qSlicerPathPlannerTableModel::LABEL_RAS_TARGET);
   
   d->EntryPointsTable->setModel(d->EntryPointsTableModel);
   d->TargetPointsTable->setModel(d->TargetPointsTableModel);
@@ -361,14 +364,18 @@ void qSlicerPathPlannerPanelWidget
 ::deleteEntryPoints()
 {
   Q_D(qSlicerPathPlannerPanelWidget);
-  if (d->EntryPointsAnnotationNodeSelector)
+
+  if(this->toggleSwitchFlag == SELECTENTRYPOINTLIST)
   {
-    vtkMRMLAnnotationHierarchyNode* hnode;
-    hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(d->EntryPointsAnnotationNodeSelector->currentNode());
-    if (hnode)
+    if (d->EntryPointsAnnotationNodeSelector)
     {
-      hnode->RemoveChildrenNodes();
-      hnode->InvokeEvent(vtkMRMLAnnotationHierarchyNode::HierarchyModifiedEvent);
+      vtkMRMLAnnotationHierarchyNode* hnode;
+      hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(d->EntryPointsAnnotationNodeSelector->currentNode());
+      if (hnode)
+      {
+        hnode->RemoveChildrenNodes();
+        hnode->InvokeEvent(vtkMRMLAnnotationHierarchyNode::HierarchyModifiedEvent);
+      }
     }
   }
 }
@@ -379,14 +386,18 @@ void qSlicerPathPlannerPanelWidget
 ::deleteTargetPoints()
 {
   Q_D(qSlicerPathPlannerPanelWidget);
-  if (d->TargetPointsAnnotationNodeSelector)
+ 
+  if(this->toggleSwitchFlag == SELECTTARGETPOINTLIST)
   {
-    vtkMRMLAnnotationHierarchyNode* hnode;
-    hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(d->TargetPointsAnnotationNodeSelector->currentNode());
-    if (hnode)
+    if (d->TargetPointsAnnotationNodeSelector)
     {
-      hnode->RemoveChildrenNodes();
-      hnode->InvokeEvent(vtkMRMLAnnotationHierarchyNode::HierarchyModifiedEvent);
+      vtkMRMLAnnotationHierarchyNode* hnode;
+      hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(d->TargetPointsAnnotationNodeSelector->currentNode());
+      if (hnode)
+      { 
+        hnode->RemoveChildrenNodes();
+        hnode->InvokeEvent(vtkMRMLAnnotationHierarchyNode::HierarchyModifiedEvent);
+      }
     }
   }
 }
@@ -498,12 +509,16 @@ void qSlicerPathPlannerPanelWidget
   {
     case 0: // Target point node
     {
+      this->toggleSwitchFlag = SELECTTARGETPOINTLIST;
+      
       hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast
       (d->TargetPointsAnnotationNodeSelector->currentNode());
       break;
     }
     case 2: // Entry point node
     {
+      this->toggleSwitchFlag = SELECTENTRYPOINTLIST;
+      
       hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast
       (d->EntryPointsAnnotationNodeSelector->currentNode());
       break;
