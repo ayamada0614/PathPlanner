@@ -80,7 +80,8 @@ void qSlicerPathPlannerTableModelPrivate
                                << "Point Name"
                                << "R"
                                << "A"
-                               << "S");
+                               << "S"
+                               << "Time");
   QObject::connect(q, SIGNAL(itemChanged(QStandardItem*)),
                    q, SLOT(onItemChanged(QStandardItem*)));
 
@@ -194,12 +195,12 @@ void qSlicerPathPlannerTableModel
     {
     case LABEL_RAS:
       {
-      list << "Point Name" << "R" << "A" << "S";
+      list << "Point Name" << "R" << "A" << "S" << "Time";
       break;
       }
     case LABEL_XYZ:
       {
-      list << "Point Name" << "X" << "Y" << "Z";
+      list << "Point Name" << "X" << "Y" << "Z" << "Time";
       break;
       }
     default:

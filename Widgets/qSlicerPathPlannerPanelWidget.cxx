@@ -166,9 +166,6 @@ qSlicerPathPlannerPanelWidget
       if (node)
       {
         d->EntryPointsAnnotationNodeSelector->setCurrentNode(node);
-        // test code
-        d->EntryPointsAnnotationNodeSelector->currentNode();          
-        node->Delete();
       }
     }
   }
@@ -187,9 +184,6 @@ qSlicerPathPlannerPanelWidget
       if (node)
       {
         d->TargetPointsAnnotationNodeSelector->setCurrentNode(node);
-        // test code
-        d->TargetPointsAnnotationNodeSelector->currentNode();          
-        node->Delete();
       }
     }
   }
@@ -204,18 +198,12 @@ qSlicerPathPlannerPanelWidget
   
   if (d->EntryPointListSelector && d->TargetPointListSelector)
   {
-    /*
-    connect(d->EntryPointListSelector, SIGNAL(released()),
-            d->TargetPointListSelector, SLOT(released()));
-    connect(d->TargetPointListSelector, SIGNAL(released()),
-            d->EntryPointListSelector, SLOT(toggle()));
-     */
-    //connect(d->EntryPointListSelector, SIGNAL(released()),
-    //        d->TargetPointListSelector, SIGNAL(clicked()));
     connect(d->TargetPointListSelector, SIGNAL(released()),
             d->EntryPointListSelector, SLOT(toggle()));
     connect(d->EntryPointListSelector, SIGNAL(released()),
             d->TargetPointListSelector, SLOT(toggle()));
+    connect(d->TargetPointListSelector, SIGNAL(stateChanged(int)),
+            this, SLOT(toggleAction(int)));    
   }
   /*
   if (d->DeleteTargetPointsButton)
@@ -492,6 +480,41 @@ void qSlicerPathPlannerPanelWidget
   
   //QAction *thisAction = d->AddEntryPointToolBar->MRMLAppLogic->menu()->activeAction();
   
+}
+
+
+
+//-----------------------------------------------------------------------------
+void qSlicerPathPlannerPanelWidget
+::toggleAction(int index)
+{
+  std::cout << "toggle signal= " << index << std::endl;
+  
+  Q_D(qSlicerPathPlannerPanelWidget);
+  
+  vtkMRMLAnnotationHierarchyNode* hnode = NULL;
+  
+  switch(index)
+  {
+    case 0: // Target point node
+    {
+      hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast
+      (d->TargetPointsAnnotationNodeSelector->currentNode());
+      break;
+    }
+    case 2: // Entry point node
+    {
+      hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast
+      (d->EntryPointsAnnotationNodeSelector->currentNode());
+      break;
+    }
+    default:
+      break;
+  }
+  if (hnode)
+  {
+    d->AnnotationsLogic->SetActiveHierarchyNodeID(hnode->GetID());
+  }
 }
 
 //-----------------------------------------------------------------------------

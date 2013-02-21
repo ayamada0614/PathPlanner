@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>907</width>
-    <height>631</height>
+    <width>567</width>
+    <height>641</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -103,6 +103,9 @@
            <string>vtkMRMLAnnotationHierarchyNode</string>
           </stringlist>
          </property>
+         <property name="showHidden">
+          <bool>true</bool>
+         </property>
          <property name="editEnabled">
           <bool>false</bool>
          </property>
@@ -141,6 +144,9 @@
           <stringlist>
            <string>vtkMRMLAnnotationHierarchyNode</string>
           </stringlist>
+         </property>
+         <property name="showHidden">
+          <bool>true</bool>
          </property>
          <property name="editEnabled">
           <bool>false</bool>
