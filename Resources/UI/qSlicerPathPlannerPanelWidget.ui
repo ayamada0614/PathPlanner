@@ -29,19 +29,19 @@
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="TargetPointListSelector">
-         <property name="text">
-          <string>Entry Point</string>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QCheckBox" name="EntryPointListSelector">
          <property name="text">
           <string>Target Point</string>
          </property>
          <property name="checked">
           <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="TargetPointListSelector">
+         <property name="text">
+          <string>Entry Point</string>
          </property>
         </widget>
        </item>
@@ -85,48 +85,6 @@
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="EntryPointNodeSelectorLayout">
-       <item>
-        <widget class="QLabel" name="EntryPointLabel">
-         <property name="text">
-          <string>Entry Point:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="qMRMLNodeComboBox" name="EntryPointsAnnotationNodeSelector">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="nodeTypes">
-          <stringlist>
-           <string>vtkMRMLAnnotationHierarchyNode</string>
-          </stringlist>
-         </property>
-         <property name="showHidden">
-          <bool>true</bool>
-         </property>
-         <property name="editEnabled">
-          <bool>false</bool>
-         </property>
-         <property name="renameEnabled">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <widget class="QTableView" name="EntryPointsTable"/>
-     </item>
-     <item>
-      <widget class="Line" name="line">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
       <layout class="QHBoxLayout" name="TargetPointNodeSelectorLayout">
        <item>
         <widget class="QLabel" name="TargetPointLabel">
@@ -163,6 +121,48 @@
      </item>
      <item>
       <widget class="Line" name="line_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="EntryPointNodeSelectorLayout">
+       <item>
+        <widget class="QLabel" name="EntryPointLabel">
+         <property name="text">
+          <string>Entry Point:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="qMRMLNodeComboBox" name="EntryPointsAnnotationNodeSelector">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="nodeTypes">
+          <stringlist>
+           <string>vtkMRMLAnnotationHierarchyNode</string>
+          </stringlist>
+         </property>
+         <property name="showHidden">
+          <bool>true</bool>
+         </property>
+         <property name="editEnabled">
+          <bool>false</bool>
+         </property>
+         <property name="renameEnabled">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QTableView" name="EntryPointsTable"/>
+     </item>
+     <item>
+      <widget class="Line" name="line">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
