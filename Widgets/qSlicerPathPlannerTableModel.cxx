@@ -136,8 +136,8 @@ void qSlicerPathPlannerTableModelPrivate
   q->setColumnCount(6);
   q->setHorizontalHeaderLabels(QStringList()
                                << "Path"
-                               << "Tip1"
-                               << "Tip2"
+                               << "Target"
+                               << "Entry"
                                << "Length"
                                << "Time"
                                << "Memo");
@@ -301,7 +301,7 @@ void qSlicerPathPlannerTableModel
       }
     case LABEL_RAS_PATH:
       {
-        list << "Path" << "Tip1" << "Tip2" << "Length" << "Time" << "Memo";
+        list << "Path" << "Target" << "Entry" << "Length" << "Time" << "Memo";
         break;
       }
     case LABEL_XYZ:
