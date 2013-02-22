@@ -79,13 +79,14 @@ void qSlicerPathPlannerTableModelPrivate
 {
   Q_Q(qSlicerPathPlannerTableModel);
 
-  q->setColumnCount(5);
+  q->setColumnCount(6);
   q->setHorizontalHeaderLabels(QStringList()
                                << "Point Name"
                                << "R"
                                << "A"
                                << "S"
-                               << "Time");
+                               << "Time"
+                               << "Memo");
   QObject::connect(q, SIGNAL(itemChanged(QStandardItem*)),
                    q, SLOT(onItemChanged(QStandardItem*)));
 
@@ -96,13 +97,14 @@ void qSlicerPathPlannerTableModelPrivate
 {
   Q_Q(qSlicerPathPlannerTableModel);
   
-  q->setColumnCount(5);
+  q->setColumnCount(6);
   q->setHorizontalHeaderLabels(QStringList()
                                << "Entry Point"
                                << "R"
                                << "A"
                                << "S"
-                               << "Time");
+                               << "Time"
+                               << "Memo");
   QObject::connect(q, SIGNAL(itemChanged(QStandardItem*)),
                    q, SLOT(onItemChanged(QStandardItem*)));
   
@@ -113,13 +115,14 @@ void qSlicerPathPlannerTableModelPrivate
 {
   Q_Q(qSlicerPathPlannerTableModel);
   
-  q->setColumnCount(5);
+  q->setColumnCount(6);
   q->setHorizontalHeaderLabels(QStringList()
                                << "Target Point"
                                << "R"
                                << "A"
                                << "S"
-                               << "Time");
+                               << "Time"
+                               << "Memo");
   QObject::connect(q, SIGNAL(itemChanged(QStandardItem*)),
                    q, SLOT(onItemChanged(QStandardItem*)));
   
@@ -130,13 +133,14 @@ void qSlicerPathPlannerTableModelPrivate
 {
   Q_Q(qSlicerPathPlannerTableModel);
   
-  q->setColumnCount(5);
+  q->setColumnCount(6);
   q->setHorizontalHeaderLabels(QStringList()
                                << "Path"
                                << "Tip1"
                                << "Tip2"
                                << "Length"
-                               << "Time");
+                               << "Time"
+                               << "Memo");
   QObject::connect(q, SIGNAL(itemChanged(QStandardItem*)),
                    q, SLOT(onItemChanged(QStandardItem*)));
   
@@ -149,6 +153,8 @@ qSlicerPathPlannerTableModel
 {
   Q_D(qSlicerPathPlannerTableModel);
   d->init();
+  this->addRowFlag = 0;
+  this->nItemsPrevious = 1;
 }
 
 qSlicerPathPlannerTableModel
@@ -280,27 +286,27 @@ void qSlicerPathPlannerTableModel
     {
     case LABEL_RAS:
       {
-      list << "Point Name" << "R" << "A" << "S" << "Time";
+      list << "Point Name" << "R" << "A" << "S" << "Time" << "Memo";
       break;
       }
     case LABEL_RAS_ENTRY:
       {
-      list << "Entry Point" << "R" << "A" << "S" << "Time";
+      list << "Entry Point" << "R" << "A" << "S" << "Time" << "Memo";
       break;
       }
     case LABEL_RAS_TARGET:
       {
-      list << "Target Point" << "R" << "A" << "S" << "Time";
+      list << "Target Point" << "R" << "A" << "S" << "Time" << "Memo";
       break;
       }
     case LABEL_RAS_PATH:
       {
-        list << "Path" << "Tip1" << "Tip2" << "Length" << "Time";
+        list << "Path" << "Tip1" << "Tip2" << "Length" << "Time" << "Memo";
         break;
       }
     case LABEL_XYZ:
       {
-      list << "Point Name" << "X" << "Y" << "Z" << "Time";
+      list << "Point Name" << "X" << "Y" << "Z" << "Time" << "Memo";
       break;
       }
     default:
@@ -335,6 +341,19 @@ void qSlicerPathPlannerTableModel
   d->HierarchyNode->GetDirectChildren(collection.GetPointer());
   int nItems = collection->GetNumberOfItems();
   int nFiducials = 0;
+  
+  // flag if time and memo should be refreshed in column 5 and 6
+  if (nItems > this->nItemsPrevious)
+  {
+    this->addRowFlag = 1;
+    this->nItemsPrevious = nItems;
+  }
+  else
+  {
+    this->addRowFlag = 0;    
+    this->nItemsPrevious = nItems;
+  }
+  
   collection->InitTraversal();
   for (int i = 0; i < nItems; i ++)
     {
@@ -361,10 +380,9 @@ void qSlicerPathPlannerTableModel
         this->invisibleRootItem()->setChild(i, 0, item);
         }
       item->setText(fnode->GetName());
-      //item->setData(QVariant(),Qt::SizeHintRole);
       item->setData(fnode->GetID(),qSlicerPathPlannerTableModel::NodeIDRole);
 
-      for (int j = 0; j < 4; j ++)
+      for (int j = 0; j < 5; j ++)
         {
         QStandardItem* item = this->invisibleRootItem()->child(i, j+1);
         if (item == NULL)
@@ -377,25 +395,30 @@ void qSlicerPathPlannerTableModel
           if(j<3)
           {
             item->setText(str);
-            //item->setData(QVariant(),Qt::SizeHintRole);
           }
-          else 
+          else if(j==3)
           {
             // time stamp for each row
-            if(i == nItems-1)
+            if(i == nItems-1 && this->addRowFlag == 1)
             {
-              QString text = QTime::currentTime().toString();
-              QByteArray byteArray(text.toAscii());
-              const char *cStr = byteArray.constData();
-              item->setText(cStr);                
+              QString timeStamp = QTime::currentTime().toString();
+              QByteArray byteArray(timeStamp.toAscii());
+              const char *timeStampStr = byteArray.constData();
+              item->setText(timeStampStr);                
             }
+          }
+          else
+          {
+            // memo column for each row
+            if(i == nItems-1 && this->addRowFlag == 1)
+            {
+              item->setText("");                
+            }            
           }
         }
       }
     }
 
-  //QObject::connect(this, SIGNAL(itemChanged(QStandardItem*)),
-  //this, SLOT(onItemChanged(QStandardItem*)));
   d->PendingItemModified = -1;
 
 }

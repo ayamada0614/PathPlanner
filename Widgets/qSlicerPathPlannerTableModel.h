@@ -59,7 +59,8 @@ public:
     LABEL_RAS_TARGET = 4,
     LABEL_RAS_PATH = 5,
   };
-  QTime time;
+  int addRowFlag;
+  int nItemsPrevious;
 
 protected:
   qSlicerPathPlannerTableModel(qSlicerPathPlannerTableModelPrivate* pimpl, QObject *parent=0);
