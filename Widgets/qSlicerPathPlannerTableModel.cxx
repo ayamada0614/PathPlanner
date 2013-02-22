@@ -381,17 +381,14 @@ void qSlicerPathPlannerTableModel
           }
           else 
           {
-            //if(i == nItems-1)
-            //{
+            // time stamp for each row
+            if(i == nItems-1)
+            {
               QString text = QTime::currentTime().toString();
               QByteArray byteArray(text.toAscii());
-              //this->clickedTime[0][i] = byteArray.constData();
               const char *cStr = byteArray.constData();
-              //this->clickedTime[i] = cStr;
-            //}
-            item->setText(cStr);                
-            //item->setText(this->clickedTime[0][i]);                
-            //std::cout << "this->clickedTime[0][" << i << "] =" << this->clickedTime[0][i] << std::endl;
+              item->setText(cStr);                
+            }
           }
         }
       }
