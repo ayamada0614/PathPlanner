@@ -60,7 +60,6 @@ public:
     LABEL_RAS_PATH = 5,
   };
   QTime time;
-  const char* clickedTime[3];
 
 protected:
   qSlicerPathPlannerTableModel(qSlicerPathPlannerTableModelPrivate* pimpl, QObject *parent=0);
