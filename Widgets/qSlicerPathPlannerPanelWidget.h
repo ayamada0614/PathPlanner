@@ -47,6 +47,7 @@ public:
   qSlicerPathPlannerPanelWidget(QWidget *parent=0);
   virtual ~qSlicerPathPlannerPanelWidget();
   int toggleSwitchFlag;
+  
 
 public slots:
   virtual void setMRMLScene(vtkMRMLScene *newScene);

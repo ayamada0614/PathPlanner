@@ -67,6 +67,7 @@ public:
   // Tables in "Entry Points" and "Target Points"
   qSlicerPathPlannerTableModel* EntryPointsTableModel;
   qSlicerPathPlannerTableModel* TargetPointsTableModel;
+  qSlicerPathPlannerTableModel* PathsTableModel;
   
   // Pointer to Logic class of Annotations module to switch ActiveHierarchy node.
   vtkSlicerAnnotationModuleLogic* AnnotationsLogic;
@@ -82,6 +83,7 @@ qSlicerPathPlannerPanelWidgetPrivate
 {
   this->EntryPointsTableModel = NULL;
   this->TargetPointsTableModel = NULL;
+  this->PathsTableModel = NULL;
   //this->TrackerTransform = NULL;
   this->AnnotationsLogic = NULL;
   this->OriginalAnnotationID = "";  
@@ -144,15 +146,23 @@ qSlicerPathPlannerPanelWidget
   }
   vtkMRMLScene * scene = qSlicerCoreApplication::application()->mrmlScene();
 
+  // set list models
   d->EntryPointsTableModel  = new qSlicerPathPlannerTableModel(this);
   d->EntryPointsTableModel->initList(qSlicerPathPlannerTableModel::LABEL_RAS_ENTRY);
+
   d->TargetPointsTableModel = new qSlicerPathPlannerTableModel(this);
   d->TargetPointsTableModel->initList(qSlicerPathPlannerTableModel::LABEL_RAS_TARGET);
+
+  d->PathsTableModel = new qSlicerPathPlannerTableModel(this);
+  d->PathsTableModel->initList(qSlicerPathPlannerTableModel::LABEL_RAS_PATH);
+  
   d->EntryPointsTableModel->setCoordinateLabel(qSlicerPathPlannerTableModel::LABEL_RAS_ENTRY);
   d->TargetPointsTableModel->setCoordinateLabel(qSlicerPathPlannerTableModel::LABEL_RAS_TARGET);
+  d->PathsTableModel->setCoordinateLabel(qSlicerPathPlannerTableModel::LABEL_RAS_PATH);
   
   d->EntryPointsTable->setModel(d->EntryPointsTableModel);
   d->TargetPointsTable->setModel(d->TargetPointsTableModel);
+  d->PathsTable->setModel(d->PathsTableModel);
  
   if (d->EntryPointsAnnotationNodeSelector)
   {
@@ -253,8 +263,8 @@ qSlicerPathPlannerPanelWidget
                      d->AddPointToolBar,
                      SLOT(setMRMLScene(vtkMRMLScene*)));
     // change current annotationhierarchy node
-    QObject::connect(d->AddPointToolBar,SIGNAL(actionTriggered(QAction*)),
-                     this,SLOT(entryPointToolBarClicked(QAction*)));
+    //QObject::connect(d->AddPointToolBar,SIGNAL(actionTriggered(QAction*)),
+    //                 this,SLOT(entryPointToolBarClicked(QAction*)));
   }
   /*
   if (d->AddTargetPointToolBar)
@@ -464,7 +474,7 @@ void qSlicerPathPlannerPanelWidget
 void qSlicerPathPlannerPanelWidget
 ::entryPointToolBarClicked(QAction*)
 {
-  std::cout << "entryPointToolBarClicked()" << std::endl;
+  //std::cout << "entryPointToolBarClicked()" << std::endl;
 }
 
 
@@ -473,10 +483,7 @@ void qSlicerPathPlannerPanelWidget
 void qSlicerPathPlannerPanelWidget
 ::addEntryPointButtonClicked()
 {
-  Q_D(qSlicerPathPlannerPanelWidget);
-  //d->AddEntryPointButton->setText(tr("Add Entry Point ON"));
-  std::cout << "addEntryPointButtonClicked()" << std::endl;
-  
+  Q_D(qSlicerPathPlannerPanelWidget);  
   
   vtkMRMLAnnotationHierarchyNode* hnode = NULL;
   hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast
@@ -484,13 +491,7 @@ void qSlicerPathPlannerPanelWidget
   if (hnode)
   {
     d->AnnotationsLogic->SetActiveHierarchyNodeID(hnode->GetID());
-    std::cout << "addEntryPointButtonClicked()" << std::endl;
-  }
-  
-  //vtkMRMLInteractionNode * interactionNode = d->AddEntryPointToolBar->SwitchToSinglePlaceMode();//->GetInteractionNode();
-  
-  //QAction *thisAction = d->AddEntryPointToolBar->MRMLAppLogic->menu()->activeAction();
-  
+  }  
 }
 
 
@@ -499,8 +500,6 @@ void qSlicerPathPlannerPanelWidget
 void qSlicerPathPlannerPanelWidget
 ::toggleAction(int index)
 {
-  std::cout << "toggle signal= " << index << std::endl;
-  
   Q_D(qSlicerPathPlannerPanelWidget);
   
   vtkMRMLAnnotationHierarchyNode* hnode = NULL;

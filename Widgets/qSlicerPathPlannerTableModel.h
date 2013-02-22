@@ -26,6 +26,7 @@
 
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
+#include <qdatetime.h>
 
 #include "qSlicerPathPlannerModuleWidgetsExport.h"
 
@@ -56,7 +57,10 @@ public:
     LABEL_XYZ = 2,
     LABEL_RAS_ENTRY = 3,
     LABEL_RAS_TARGET = 4,
+    LABEL_RAS_PATH = 5,
   };
+  QTime time;
+  const char* clickedTime[3][100];
 
 protected:
   qSlicerPathPlannerTableModel(qSlicerPathPlannerTableModelPrivate* pimpl, QObject *parent=0);

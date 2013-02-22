@@ -33,6 +33,7 @@
 #include <map>
 #include <sstream>
 
+
 class Q_SLICER_MODULE_PATHPLANNER_WIDGETS_EXPORT qSlicerPathPlannerTableModelPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerPathPlannerTableModel);
@@ -47,6 +48,7 @@ class Q_SLICER_MODULE_PATHPLANNER_WIDGETS_EXPORT qSlicerPathPlannerTableModelPri
   void init();
   void initForEntryList();
   void initForTargetList();
+  void initForPathList();
   vtkMRMLAnnotationHierarchyNode* HierarchyNode;
   int PendingItemModified; // -1 means not updating
   vtkMRMLScene* Scene;
@@ -77,7 +79,7 @@ void qSlicerPathPlannerTableModelPrivate
 {
   Q_Q(qSlicerPathPlannerTableModel);
 
-  q->setColumnCount(4);
+  q->setColumnCount(5);
   q->setHorizontalHeaderLabels(QStringList()
                                << "Point Name"
                                << "R"
@@ -94,7 +96,7 @@ void qSlicerPathPlannerTableModelPrivate
 {
   Q_Q(qSlicerPathPlannerTableModel);
   
-  q->setColumnCount(4);
+  q->setColumnCount(5);
   q->setHorizontalHeaderLabels(QStringList()
                                << "Entry Point"
                                << "R"
@@ -111,7 +113,7 @@ void qSlicerPathPlannerTableModelPrivate
 {
   Q_Q(qSlicerPathPlannerTableModel);
   
-  q->setColumnCount(4);
+  q->setColumnCount(5);
   q->setHorizontalHeaderLabels(QStringList()
                                << "Target Point"
                                << "R"
@@ -123,6 +125,22 @@ void qSlicerPathPlannerTableModelPrivate
   
 }
 
+void qSlicerPathPlannerTableModelPrivate
+::initForPathList()
+{
+  Q_Q(qSlicerPathPlannerTableModel);
+  
+  q->setColumnCount(5);
+  q->setHorizontalHeaderLabels(QStringList()
+                               << "Path"
+                               << "Tip1"
+                               << "Tip2"
+                               << "Length"
+                               << "Time");
+  QObject::connect(q, SIGNAL(itemChanged(QStandardItem*)),
+                   q, SLOT(onItemChanged(QStandardItem*)));
+  
+}
 
 qSlicerPathPlannerTableModel
 ::qSlicerPathPlannerTableModel(QObject *parent)
@@ -151,7 +169,7 @@ void qSlicerPathPlannerTableModel
 ::initList(int i)
 {
   Q_D(qSlicerPathPlannerTableModel);
-
+  
   switch (i)
   {
     case LABEL_RAS_ENTRY:
@@ -162,6 +180,11 @@ void qSlicerPathPlannerTableModel
     case LABEL_RAS_TARGET:
     {
       d->initForTargetList();  
+      break;
+    }
+    case LABEL_RAS_PATH:
+    {
+      d->initForPathList();  
       break;
     }
     default:
@@ -270,6 +293,11 @@ void qSlicerPathPlannerTableModel
       list << "Target Point" << "R" << "A" << "S" << "Time";
       break;
       }
+    case LABEL_RAS_PATH:
+      {
+        list << "Path" << "Tip1" << "Tip2" << "Length" << "Time";
+        break;
+      }
     case LABEL_XYZ:
       {
       list << "Point Name" << "X" << "Y" << "Z" << "Time";
@@ -298,7 +326,6 @@ void qSlicerPathPlannerTableModel
     }
 
   d->PendingItemModified = 0;
-
 
   //QObject::disconnect(this, SIGNAL(itemChanged(QStandardItem*)),
   //                    this, SLOT(onItemChanged(QStandardItem*)));
@@ -337,7 +364,7 @@ void qSlicerPathPlannerTableModel
       //item->setData(QVariant(),Qt::SizeHintRole);
       item->setData(fnode->GetID(),qSlicerPathPlannerTableModel::NodeIDRole);
 
-      for (int j = 0; j < 3; j ++)
+      for (int j = 0; j < 4; j ++)
         {
         QStandardItem* item = this->invisibleRootItem()->child(i, j+1);
         if (item == NULL)
@@ -347,8 +374,25 @@ void qSlicerPathPlannerTableModel
           }
         QString str;
         str.setNum(fnode->GetFiducialCoordinates()[j]);
-        item->setText(str);
-        //item->setData(QVariant(),Qt::SizeHintRole);
+          if(j<3)
+          {
+            item->setText(str);
+            //item->setData(QVariant(),Qt::SizeHintRole);
+          }
+          else 
+          {
+            //if(i == nItems-1)
+            //{
+              QString text = QTime::currentTime().toString();
+              QByteArray byteArray(text.toAscii());
+              //this->clickedTime[0][i] = byteArray.constData();
+              const char *cStr = byteArray.constData();
+              //this->clickedTime[i] = cStr;
+            //}
+            item->setText(cStr);                
+            //item->setText(this->clickedTime[0][i]);                
+            //std::cout << "this->clickedTime[0][" << i << "] =" << this->clickedTime[0][i] << std::endl;
+          }
         }
       }
     }
@@ -440,7 +484,7 @@ void qSlicerPathPlannerTableModel
         if (id == fnode->GetID())
           {
           QString qstr = item->text();
-          double coord[3];
+          double coord[4];
           switch (item->column())
             {
             case 0:
@@ -469,7 +513,7 @@ void qSlicerPathPlannerTableModel
               coord[2] = qstr.toDouble();
               fnode->SetFiducialCoordinates(coord);
               break;
-              }              
+              }
             }
           fnode->Modified();
           this->updateTable();
@@ -511,7 +555,7 @@ void qSlicerPathPlannerTableModel
 
 void qSlicerPathPlannerTableModel
 ::onMRMLChildNodeRemoved(vtkObject* o)
-{
+{  
   vtkMRMLNode* n = vtkMRMLNode::SafeDownCast(o);
   vtkMRMLAnnotationFiducialNode* fnode = vtkMRMLAnnotationFiducialNode::SafeDownCast(n);
   if (fnode && fnode->GetAttribute("RFTEvent"))
