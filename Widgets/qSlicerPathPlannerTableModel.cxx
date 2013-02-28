@@ -65,6 +65,9 @@ qSlicerPathPlannerTableModelPrivate
   this->PendingItemModified = -1; // -1 means not updating
   this->Scene = NULL;
   this->Counter = 0;
+  // test
+  std::cout << "constructer for qSlicerPathPlannerTableModelPrivate" << std::endl;
+
 }
 
 qSlicerPathPlannerTableModelPrivate
@@ -271,6 +274,10 @@ void qSlicerPathPlannerTableModel
     }
 
   this->updateTable();
+
+  // test
+  std::cout << "finish setNode()" << std::endl;
+  
 }
 
 
@@ -328,6 +335,10 @@ void qSlicerPathPlannerTableModel
   if (d->HierarchyNode == 0)
     {
     this->setRowCount(0);
+
+    // test
+    std::cout << "HierarchyNode == 0" << std::endl;
+      
     return;
     }
 
@@ -350,7 +361,7 @@ void qSlicerPathPlannerTableModel
   }
   else
   {
-    this->addRowFlag = 0;    
+    this->addRowFlag = 1;    
     this->nItemsPrevious = nItems;
   }
   
@@ -421,6 +432,9 @@ void qSlicerPathPlannerTableModel
 
   d->PendingItemModified = -1;
 
+  // test
+  std::cout << "finish updateTable()" << std::endl;
+
 }
 
 
@@ -430,6 +444,10 @@ void qSlicerPathPlannerTableModel
 {
   Q_D(qSlicerPathPlannerTableModel);
 
+  // test code
+  std::cout << "addPoint = " << x << y << z << std::endl;
+  
+  
   if (d->Scene && d->HierarchyNode)
     {
     // Generate fiducial point name
@@ -440,6 +458,9 @@ void qSlicerPathPlannerTableModel
     std::stringstream ss;
     ss << "Physical_" << (nItems+1);
 
+    // test
+    std::cout << "Physical?????????????????????????????? -> not used" << std::endl;
+      
     vtkSmartPointer< vtkMRMLAnnotationFiducialNode > fid = vtkSmartPointer< vtkMRMLAnnotationFiducialNode >::New();
     fid->SetName(ss.str().c_str());
     double coord[3] = {x, y, z};
@@ -452,6 +473,10 @@ void qSlicerPathPlannerTableModel
     this->updateTable();
 
     }
+
+  // test
+  std::cout << "finish addpoint()" << std::endl;
+
 }
 
 
@@ -541,6 +566,10 @@ void qSlicerPathPlannerTableModel
         }
       }
     }
+  
+  // test
+  std::cout << "finish onItemChanged()" << std::endl;
+  
 }
 
 
@@ -556,6 +585,9 @@ void qSlicerPathPlannerTableModel
   int nFiducials = 0;
   collection->InitTraversal();
 
+  // test
+  std::cout << "Using?????????????????????" << std::endl;
+
   for (int i = 0; i < nItems; i ++)
     {
     vtkMRMLAnnotationFiducialNode* fnode;
@@ -570,7 +602,13 @@ void qSlicerPathPlannerTableModel
         }
       }
     }
-  this->updateTable();
+  
+  // test
+  //this->updateTable();
+  
+  // test
+  std::cout << "finish onMRMLChildNodeAdded()" << std::endl;
+  
 }
 
 void qSlicerPathPlannerTableModel
@@ -610,6 +648,11 @@ void qSlicerPathPlannerTableModel
   vtkMRMLAnnotationFiducialNode* fnode;
   fnode = vtkMRMLAnnotationFiducialNode::SafeDownCast(obj);
 
+  // test
+  std::cout << "onMRMLChildNodeValueModified" << std::endl;
+  std::cout << "it's enough to add only UpdateTable function here" << std::endl;
+  
+  //this->addPoint(1,1,1);
   this->updateTable();
 
 }

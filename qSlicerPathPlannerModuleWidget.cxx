@@ -22,6 +22,10 @@
 #include "qSlicerPathPlannerModuleWidget.h"
 #include "ui_qSlicerPathPlannerModuleWidget.h"
 
+// test codes
+#include "qSlicerApplication.h"
+#include "vtkMRMLScene.h"
+
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_ExtensionTemplate
 class qSlicerPathPlannerModuleWidgetPrivate: public Ui_qSlicerPathPlannerModuleWidget
@@ -61,3 +65,42 @@ void qSlicerPathPlannerModuleWidget::setup()
   this->Superclass::setup();
 }
 
+
+//-----------------------------------------------------------------------------
+void qSlicerPathPlannerModuleWidget::enter()
+{
+  Q_D(qSlicerPathPlannerModuleWidget);
+  
+  this->Superclass::enter();
+  if (d->PathPlannerPanel)
+  {
+    d->PathPlannerPanel->enter();
+  }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerPathPlannerModuleWidget::setMRMLScene(vtkMRMLScene *newScene)
+{
+  Q_D(qSlicerPathPlannerModuleWidget);
+  
+  vtkMRMLScene* oldScene = this->mrmlScene();
+  
+  this->Superclass::setMRMLScene(newScene);
+  
+  qSlicerApplication * app = qSlicerApplication::application();
+  if (!app)
+  {
+    return;
+  }
+  
+  if (oldScene != newScene)
+  {
+    if (d->PathPlannerPanel)
+    {
+      d->PathPlannerPanel->setMRMLScene(newScene);
+    }
+  }
+  
+  newScene->InitTraversal();
+  
+}

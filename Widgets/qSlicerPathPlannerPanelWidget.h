@@ -30,6 +30,7 @@
 
 #define SELECTENTRYPOINTLIST 0
 #define SELECTTARGETPOINTLIST 2
+#define SELECTPATHLIST 3 // test
 
 class qSlicerPathPlannerPanelWidgetPrivate;
 class vtkObject;
@@ -51,6 +52,11 @@ public:
 
 public slots:
   virtual void setMRMLScene(vtkMRMLScene *newScene);
+
+  // test code
+  void setTrackerTransform(vtkMRMLNode*);
+  void onTrackerTransformModified();
+
   void setEntryPointsAnnotationNode(vtkMRMLNode*);  
   void setTargetPointsAnnotationNode(vtkMRMLNode*);
   void enter();  
@@ -61,7 +67,8 @@ protected slots:
   void addTargetPoint();
   void entryPointToolBarClicked(QAction*);
   void addEntryPointButtonClicked();
-  void toggleAction(int);
+  void switchCurrentAnotationNode(int);
+  void addPathRow();
   
 protected:
   QScopedPointer<qSlicerPathPlannerPanelWidgetPrivate> d_ptr;

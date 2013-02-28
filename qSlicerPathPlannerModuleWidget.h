@@ -40,12 +40,14 @@ public:
   virtual ~qSlicerPathPlannerModuleWidget();
 
 public slots:
-
+  // test code
+  virtual void setMRMLScene(vtkMRMLScene *newScene);
 
 protected:
   QScopedPointer<qSlicerPathPlannerModuleWidgetPrivate> d_ptr;
   
   virtual void setup();
+  virtual void enter();
 
 private:
   Q_DECLARE_PRIVATE(qSlicerPathPlannerModuleWidget);
