@@ -72,9 +72,9 @@ void qSlicerPathPlannerModuleWidget::enter()
   Q_D(qSlicerPathPlannerModuleWidget);
   
   this->Superclass::enter();
-  if (d->PathPlannerPanel)
+  if (d->Panel)
   {
-    d->PathPlannerPanel->enter();
+    d->Panel->enter();
   }
 }
 
@@ -95,9 +95,9 @@ void qSlicerPathPlannerModuleWidget::setMRMLScene(vtkMRMLScene *newScene)
   
   if (oldScene != newScene)
   {
-    if (d->PathPlannerPanel)
+    if (d->Panel)
     {
-      d->PathPlannerPanel->setMRMLScene(newScene);
+      d->Panel->setMRMLScene(newScene);
     }
   }
   

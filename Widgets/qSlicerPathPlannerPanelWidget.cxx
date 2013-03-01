@@ -168,16 +168,11 @@ qSlicerPathPlannerPanelWidget
   
   d->EntryPointsTable->setModel(d->EntryPointsTableModel);
   d->TargetPointsTable->setModel(d->TargetPointsTableModel);
-  d->PathsTable->setModel(d->EntryPointsTableModel/*PathsTableModel*/);
+  d->PathsTable->setModel(d->PathsTableModel);
  
   if (d->EntryPointsAnnotationNodeSelector)
   {
-    // test code
-    std::cout << "ImagePointsAnnotationNodeSelector1" << std::endl;
-    
     d->EntryPointsTableModel->setMRMLScene(d->EntryPointsAnnotationNodeSelector->mrmlScene());
-    // test code
-    std::cout << "ImagePointsAnnotationNodeSelector1end" << std::endl;
     connect(d->EntryPointsAnnotationNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
             d->EntryPointsTableModel, SLOT(setNode(vtkMRMLNode*)));
     connect(d->EntryPointsAnnotationNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
@@ -190,16 +185,13 @@ qSlicerPathPlannerPanelWidget
       if (node)
       {
         d->EntryPointsAnnotationNodeSelector->setCurrentNode(node);
+        node->Delete();
       }
     }
   }
   if (d->TargetPointsAnnotationNodeSelector)
   {
-    // test code
-    std::cout << "ImagePointsAnnotationNodeSelector2" << std::endl;
     d->TargetPointsTableModel->setMRMLScene(d->TargetPointsAnnotationNodeSelector->mrmlScene());
-    // test code
-    std::cout << "ImagePointsAnnotationNodeSelector2end" << std::endl;
     connect(d->TargetPointsAnnotationNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
             d->TargetPointsTableModel, SLOT(setNode(vtkMRMLNode*)));
     connect(d->EntryPointsAnnotationNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
@@ -212,6 +204,7 @@ qSlicerPathPlannerPanelWidget
       if (node)
       {
         d->TargetPointsAnnotationNodeSelector->setCurrentNode(node);
+        node->Delete();
       }
     }
   }
@@ -227,6 +220,7 @@ qSlicerPathPlannerPanelWidget
     connect(d->testNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
             this, SLOT(setEntryPointsAnnotationNode(vtkMRMLNode*)));
      */
+    /*
     if (scene)
     {
       d->testNodeSelector->setMRMLScene(scene);
@@ -236,20 +230,18 @@ qSlicerPathPlannerPanelWidget
       if (node)
       {
         d->testNodeSelector->setCurrentNode(node);
+        node->Delete();
       }
       
     }
+     */
   }
   
   
   // test code for path selector
   if (d->PathsAnnotationNodeSelector)
   {
-    // test code
-    std::cout << "ImagePointsAnnotationNodeSelector3" << std::endl;
     d->PathsTableModel->setMRMLScene(d->PathsAnnotationNodeSelector->mrmlScene());
-    // test code
-    std::cout << "ImagePointsAnnotationNodeSelector3end" << std::endl;
     connect(d->PathsAnnotationNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
             d->PathsTableModel, SLOT(setNode(vtkMRMLNode*)));
     //connect(d->ImagePointsAnnotationNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
@@ -387,20 +379,14 @@ void qSlicerPathPlannerPanelWidget
     d->TargetPointsAnnotationNodeSelector->setMRMLScene(newScene);
   }
  
-  // test code
-  std::cout << "setMRMLScene1" << std::endl;
   if (d->EntryPointsTableModel)
   {
     d->EntryPointsTableModel->setMRMLScene(newScene);
   }
-  // test code
-  std::cout << "setMRMLScene2" << std::endl;
   if (d->TargetPointsTableModel)
   {
     d->TargetPointsTableModel->setMRMLScene(newScene);
   }
-  // test code
-  std::cout << "setMRMLScene3" << std::endl;
   if (d->PathsTableModel)
   {
     d->PathsTableModel->setMRMLScene(newScene);
@@ -602,7 +588,7 @@ void qSlicerPathPlannerPanelWidget
       //d->TargetPointsTableModel->addPoint(matrix->Element[0][3],
       //                                      matrix->Element[1][3],
       //                                      matrix->Element[2][3]);
-      d->EntryPointsTableModel/*PathsTableModel*/->addPoint(1.0,2.0,3.0);
+      d->PathsTableModel->addPoint(1.0,2.0,3.0);
       
       // Switch the active hierarchy node to the original
       d->AnnotationsLogic->SetActiveHierarchyNodeID(original.c_str());
