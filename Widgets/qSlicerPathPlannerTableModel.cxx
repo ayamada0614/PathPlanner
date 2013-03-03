@@ -23,6 +23,9 @@
 
 #include "vtkMRMLAnnotationHierarchyNode.h"
 #include "vtkMRMLAnnotationFiducialNode.h"
+#include "vtkMRMLAnnotationRulerNode.h"
+
+
 #include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLScene.h"
 
@@ -65,9 +68,6 @@ qSlicerPathPlannerTableModelPrivate
   this->PendingItemModified = -1; // -1 means not updating
   this->Scene = NULL;
   this->Counter = 0;
-  // test
-  std::cout << "constructer for qSlicerPathPlannerTableModelPrivate" << std::endl;
-
 }
 
 qSlicerPathPlannerTableModelPrivate
@@ -275,9 +275,6 @@ void qSlicerPathPlannerTableModel
 
   this->updateTable();
 
-  // test
-  std::cout << "finish setNode()" << std::endl;
-  
 }
 
 
@@ -336,9 +333,6 @@ void qSlicerPathPlannerTableModel
     {
     this->setRowCount(0);
 
-    // test
-    std::cout << "HierarchyNode == 0" << std::endl;
-      
     return;
     }
 
@@ -432,9 +426,6 @@ void qSlicerPathPlannerTableModel
 
   d->PendingItemModified = -1;
 
-  // test
-  std::cout << "finish updateTable()" << std::endl;
-
 }
 
 
@@ -444,10 +435,6 @@ void qSlicerPathPlannerTableModel
 {
   Q_D(qSlicerPathPlannerTableModel);
 
-  // test code
-  std::cout << "addPoint = " << x << y << z << std::endl;
-  
-  
   if (d->Scene && d->HierarchyNode)
     {
     // Generate fiducial point name
@@ -458,9 +445,6 @@ void qSlicerPathPlannerTableModel
     std::stringstream ss;
     ss << "Physical_" << (nItems+1);
 
-    // test
-    std::cout << "Physical?????????????????????????????? -> not used" << std::endl;
-      
     vtkSmartPointer< vtkMRMLAnnotationFiducialNode > fid = vtkSmartPointer< vtkMRMLAnnotationFiducialNode >::New();
     fid->SetName(ss.str().c_str());
     double coord[3] = {x, y, z};
@@ -473,10 +457,174 @@ void qSlicerPathPlannerTableModel
     this->updateTable();
 
     }
+}
 
-  // test
-  std::cout << "finish addpoint()" << std::endl;
 
+//-----------------------------------------------------------------------------
+void qSlicerPathPlannerTableModel
+::addRuler(void)
+{
+  Q_D(qSlicerPathPlannerTableModel);
+  
+  if (d->Scene && d->HierarchyNode)
+  {
+    // Generate fiducial point name
+    vtkNew<vtkCollection> collection;
+    d->HierarchyNode->GetDirectChildren(collection.GetPointer());
+    int nItems = collection->GetNumberOfItems();
+    
+    std::stringstream ss;
+    ss << "Ruler_" << (nItems+1);
+    
+    vtkSmartPointer< vtkMRMLAnnotationRulerNode > fid = vtkSmartPointer< vtkMRMLAnnotationRulerNode >::New();
+    
+    double tipPosition[2][3];
+    
+    tipPosition[0][0] = 5.0;
+    tipPosition[0][1] = 5.0;
+    tipPosition[0][2] = 5.0;
+
+    tipPosition[1][0] = 50.0;
+    tipPosition[1][1] = 50.0;
+    tipPosition[1][2] = 50.0;
+    
+    fid->SetPosition1(tipPosition[0]);
+    fid->SetPosition2(tipPosition[1]);
+    
+    // the ruler is locked.
+    fid->SetLocked(!fid->GetLocked());
+
+    fid->SetName(ss.str().c_str());
+    d->Scene->AddNode(fid);
+    fid->CreateAnnotationTextDisplayNode();
+    //fid->CreateAnnotationPointDisplayNode();
+    //fid->GetAnnotationPointDisplayNode()->SetGlyphScale(5);
+    //fid->GetAnnotationPointDisplayNode()->SetGlyphType(vtkMRMLAnnotationPointDisplayNode::Sphere3D);
+    
+    // lock a line
+    
+    
+    
+    /*
+    fid->SetName(ss.str().c_str());
+    double coord[3] = {x, y, z};
+    fid->SetFiducialCoordinates(x, y, z);
+    d->Scene->AddNode(fid);
+    fid->CreateAnnotationTextDisplayNode();
+    fid->CreateAnnotationPointDisplayNode();
+    fid->GetAnnotationPointDisplayNode()->SetGlyphScale(5);
+    fid->GetAnnotationPointDisplayNode()->SetGlyphType(vtkMRMLAnnotationPointDisplayNode::Sphere3D);
+    */
+    //this->updateTable();
+    this->updateRulerTable();
+    
+  }
+}
+
+
+//------------------------------------------------------------------------------
+void qSlicerPathPlannerTableModel
+::updateRulerTable()
+{
+  Q_D(qSlicerPathPlannerTableModel);
+  
+  if (d->HierarchyNode == 0)
+  {
+    this->setRowCount(0);
+    
+    return;
+  }
+  
+  d->PendingItemModified = 0;
+  
+  //QObject::disconnect(this, SIGNAL(itemChanged(QStandardItem*)),
+  //                    this, SLOT(onItemChanged(QStandardItem*)));
+  
+  // Count the number of child Fiducial nodes 
+  vtkNew<vtkCollection> collection;
+  d->HierarchyNode->GetDirectChildren(collection.GetPointer());
+  int nItems = collection->GetNumberOfItems();
+  int nFiducials = 0;
+  
+  // flag if time and memo should be refreshed in column 5 and 6
+  if (nItems > this->nItemsPrevious)
+  {
+    this->addRowFlag = 1;
+    this->nItemsPrevious = nItems;
+  }
+  else
+  {
+    this->addRowFlag = 1;    
+    this->nItemsPrevious = nItems;
+  }
+  
+  collection->InitTraversal();
+  for (int i = 0; i < nItems; i ++)
+  {
+    vtkMRMLAnnotationFiducialNode* fnode;
+    fnode = vtkMRMLAnnotationFiducialNode::SafeDownCast(collection->GetNextItemAsObject());
+    if (fnode)
+    {
+      nFiducials ++;
+    }
+  }
+  this->setRowCount(nFiducials);
+  
+  collection->InitTraversal();
+  for (int i = 0; i < nItems; i ++)
+  {
+    vtkMRMLAnnotationFiducialNode* fnode;
+    fnode = vtkMRMLAnnotationFiducialNode::SafeDownCast(collection->GetNextItemAsObject());
+    if (fnode)
+    {
+      QStandardItem* item = this->invisibleRootItem()->child(i, 0);
+      if (item == NULL)
+      {
+        item = new QStandardItem();
+        this->invisibleRootItem()->setChild(i, 0, item);
+      }
+      item->setText(fnode->GetName());
+      item->setData(fnode->GetID(),qSlicerPathPlannerTableModel::NodeIDRole);
+      
+      for (int j = 0; j < 5; j ++)
+      {
+        QStandardItem* item = this->invisibleRootItem()->child(i, j+1);
+        if (item == NULL)
+        {
+          item = new QStandardItem();
+          this->invisibleRootItem()->setChild(i, j+1, item);
+        }
+        QString str;
+        str.setNum(fnode->GetFiducialCoordinates()[j]);
+        if(j<3)
+        {
+          item->setText(str);
+        }
+        else if(j==3)
+        {
+          // time stamp for each row
+          if(i == nItems-1 && this->addRowFlag == 1)
+          {
+            QString timeStamp = QTime::currentTime().toString();
+            QByteArray byteArray(timeStamp.toAscii());
+            const char *timeStampStr = byteArray.constData();
+            item->setText(timeStampStr);                
+          }
+        }
+        else
+        {
+          // memo column for each row
+          if(i == nItems-1 && this->addRowFlag == 1)
+          {
+            item->setText("");                
+          }            
+        }
+      }
+    }
+  }
+  
+  d->PendingItemModified = -1;
+  
 }
 
 
@@ -585,9 +733,6 @@ void qSlicerPathPlannerTableModel
   int nFiducials = 0;
   collection->InitTraversal();
 
-  // test
-  std::cout << "Using?????????????????????" << std::endl;
-
   for (int i = 0; i < nItems; i ++)
     {
     vtkMRMLAnnotationFiducialNode* fnode;
@@ -605,10 +750,6 @@ void qSlicerPathPlannerTableModel
   
   // test
   //this->updateTable();
-  
-  // test
-  std::cout << "finish onMRMLChildNodeAdded()" << std::endl;
-  
 }
 
 void qSlicerPathPlannerTableModel
@@ -656,5 +797,4 @@ void qSlicerPathPlannerTableModel
   this->updateTable();
 
 }
-
 

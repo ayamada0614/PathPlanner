@@ -211,8 +211,8 @@ qSlicerPathPlannerPanelWidget
 
   // test code
   // it works
-  if (d->testNodeSelector)
-  {
+  //if (d->testNodeSelector)
+  //{
     //d->EntryPointsTableModel->setMRMLScene(d->testNodeSelector->mrmlScene());
     /*
     connect(d->testNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
@@ -235,7 +235,7 @@ qSlicerPathPlannerPanelWidget
       
     }
      */
-  }
+  //}
   
   
   // test code for path selector
@@ -589,6 +589,7 @@ void qSlicerPathPlannerPanelWidget
       //                                      matrix->Element[1][3],
       //                                      matrix->Element[2][3]);
       d->PathsTableModel->addPoint(1.0,2.0,3.0);
+      d->PathsTableModel->addRuler();
       
       // Switch the active hierarchy node to the original
       d->AnnotationsLogic->SetActiveHierarchyNodeID(original.c_str());

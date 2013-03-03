@@ -28,6 +28,9 @@
 // PathPlannerPanel Widgets includes
 #include "qSlicerPathPlannerModuleWidgetsExport.h"
 
+// test code
+//#include "vtkMRMLAnnotationNode"
+
 #define SELECTENTRYPOINTLIST 0
 #define SELECTTARGETPOINTLIST 2
 #define SELECTPATHLIST 3 // test

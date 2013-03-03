@@ -68,7 +68,9 @@ protected:
 public:  
   void setCoordinateLabel(int m); // LABEL_RAS or LABEL_XYZ
   void updateTable();
+  void updateRulerTable();
   void addPoint(double x, double y, double z);
+  void addRuler(void);
   void initList(int);
 
 public slots:

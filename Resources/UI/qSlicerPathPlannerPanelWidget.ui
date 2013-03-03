@@ -152,36 +152,6 @@
           <enum>QComboBox::AdjustToMinimumContentsLength</enum>
          </property>
         </widget>
-        <widget class="qMRMLNodeComboBox" name="testNodeSelector">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>380</x>
-           <y>40</y>
-           <width>139</width>
-           <height>26</height>
-          </rect>
-         </property>
-         <property name="nodeTypes">
-          <stringlist>
-           <string>vtkMRMLAnnotationHierarchyNode</string>
-          </stringlist>
-         </property>
-         <property name="showHidden">
-          <bool>false</bool>
-         </property>
-         <property name="noneEnabled">
-          <bool>true</bool>
-         </property>
-         <property name="editEnabled">
-          <bool>true</bool>
-         </property>
-         <property name="renameEnabled">
-          <bool>true</bool>
-         </property>
-        </widget>
        </widget>
        <widget class="QWidget" name="AdvancedConfigurations">
         <property name="geometry">
