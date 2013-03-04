@@ -355,7 +355,7 @@ void qSlicerPathPlannerTableModel
   }
   else
   {
-    this->addRowFlag = 1;    
+    this->addRowFlag = 0;    
     this->nItemsPrevious = nItems;
   }
   
@@ -443,8 +443,9 @@ void qSlicerPathPlannerTableModel
     int nItems = collection->GetNumberOfItems();
 
     std::stringstream ss;
-    ss << "Physical_" << (nItems+1);
+    ss << "Path_" << (nItems+1);
 
+    //vtkSmartPointer< vtkMRMLAnnotationFiducialNode > fid = vtkSmartPointer< vtkMRMLAnnotationFiducialNode >::New();
     vtkSmartPointer< vtkMRMLAnnotationFiducialNode > fid = vtkSmartPointer< vtkMRMLAnnotationFiducialNode >::New();
     fid->SetName(ss.str().c_str());
     double coord[3] = {x, y, z};
@@ -454,8 +455,11 @@ void qSlicerPathPlannerTableModel
     fid->CreateAnnotationPointDisplayNode();
     fid->GetAnnotationPointDisplayNode()->SetGlyphScale(5);
     fid->GetAnnotationPointDisplayNode()->SetGlyphType(vtkMRMLAnnotationPointDisplayNode::Sphere3D);
-    this->updateTable();
-
+    //this->updateTable();
+    
+    // test code  
+    this->updateRulerTable();
+    
     }
 }
 
@@ -474,22 +478,30 @@ void qSlicerPathPlannerTableModel
     int nItems = collection->GetNumberOfItems();
     
     std::stringstream ss;
-    ss << "Ruler_" << (nItems+1);
+    ss << "P_" << (nItems+1);
     
     vtkSmartPointer< vtkMRMLAnnotationRulerNode > fid = vtkSmartPointer< vtkMRMLAnnotationRulerNode >::New();
     
     double tipPosition[2][3];
     
-    tipPosition[0][0] = 5.0;
-    tipPosition[0][1] = 5.0;
+    tipPosition[0][0] = 0.0;
+    tipPosition[0][1] = 0.0;
     tipPosition[0][2] = 5.0;
 
-    tipPosition[1][0] = 50.0;
-    tipPosition[1][1] = 50.0;
-    tipPosition[1][2] = 50.0;
+    tipPosition[1][0] = 0.0;
+    tipPosition[1][1] = 0.0;
+    tipPosition[1][2] = 10.0;
     
     fid->SetPosition1(tipPosition[0]);
     fid->SetPosition2(tipPosition[1]);
+    
+    double difference[3];
+
+    // calculate distance
+    difference[0] = tipPosition[0][0] - tipPosition[1][0];
+    difference[1] = tipPosition[0][1] - tipPosition[1][1];
+    difference[2] = tipPosition[0][2] - tipPosition[1][2];    
+    fid->SetDistanceMeasurement(sqrt(difference[0]*difference[0]+difference[1]*difference[1]+difference[2]*difference[2]));
     
     // the ruler is locked.
     fid->SetLocked(!fid->GetLocked());
@@ -499,10 +511,7 @@ void qSlicerPathPlannerTableModel
     fid->CreateAnnotationTextDisplayNode();
     //fid->CreateAnnotationPointDisplayNode();
     //fid->GetAnnotationPointDisplayNode()->SetGlyphScale(5);
-    //fid->GetAnnotationPointDisplayNode()->SetGlyphType(vtkMRMLAnnotationPointDisplayNode::Sphere3D);
-    
-    // lock a line
-    
+    //fid->GetAnnotationPointDisplayNode()->SetGlyphType(vtkMRMLAnnotationPointDisplayNode::Sphere3D);    
     
     
     /*
@@ -554,15 +563,17 @@ void qSlicerPathPlannerTableModel
   }
   else
   {
-    this->addRowFlag = 1;    
+    this->addRowFlag = 0;    
     this->nItemsPrevious = nItems;
   }
   
   collection->InitTraversal();
   for (int i = 0; i < nItems; i ++)
   {
-    vtkMRMLAnnotationFiducialNode* fnode;
-    fnode = vtkMRMLAnnotationFiducialNode::SafeDownCast(collection->GetNextItemAsObject());
+    //vtkMRMLAnnotationFiducialNode* fnode;
+    //fnode = vtkMRMLAnnotationFiducialNode::SafeDownCast(collection->GetNextItemAsObject());
+    vtkMRMLAnnotationRulerNode* fnode;
+    fnode = vtkMRMLAnnotationRulerNode::SafeDownCast(collection->GetNextItemAsObject());
     if (fnode)
     {
       nFiducials ++;
@@ -573,8 +584,10 @@ void qSlicerPathPlannerTableModel
   collection->InitTraversal();
   for (int i = 0; i < nItems; i ++)
   {
-    vtkMRMLAnnotationFiducialNode* fnode;
-    fnode = vtkMRMLAnnotationFiducialNode::SafeDownCast(collection->GetNextItemAsObject());
+    //vtkMRMLAnnotationFiducialNode* fnode;
+    //fnode = vtkMRMLAnnotationFiducialNode::SafeDownCast(collection->GetNextItemAsObject());
+    vtkMRMLAnnotationRulerNode* fnode;
+    fnode = vtkMRMLAnnotationRulerNode::SafeDownCast(collection->GetNextItemAsObject());
     if (fnode)
     {
       QStandardItem* item = this->invisibleRootItem()->child(i, 0);
@@ -595,9 +608,29 @@ void qSlicerPathPlannerTableModel
           this->invisibleRootItem()->setChild(i, j+1, item);
         }
         QString str;
+        /*
         str.setNum(fnode->GetFiducialCoordinates()[j]);
         if(j<3)
         {
+          item->setText(str);
+        }
+        */
+        
+        // set tip position
+        if(j==0)
+        {
+          //str.setNum(fnode->GetFiducialCoordinates()[j]);
+          //str="Set Target";
+          item->setText("Set Target Point");          
+        }
+        else if(j==1)
+        {
+          //item->setText(str);
+          item->setText("Set Entry Point");                    
+        }
+        else if(j==2) 
+        { // get distance
+          str.setNum(fnode->GetDistanceMeasurement());          
           item->setText(str);
         }
         else if(j==3)
