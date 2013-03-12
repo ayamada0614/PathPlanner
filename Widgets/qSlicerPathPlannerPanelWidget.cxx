@@ -102,23 +102,22 @@ vtkMRMLAnnotationHierarchyNode* qSlicerPathPlannerPanelWidgetPrivate
 ::createNewHierarchyNode(const char* basename)
 {
   // NOTE: this method has to be called after setting AnnotationLogic;
-  if (this->AnnotationsLogic)
+  vtkMRMLScene * scene = qSlicerCoreApplication::application()->mrmlScene();
+
+  if (!this->AnnotationsLogic || !scene)
   {
-    vtkMRMLScene * scene = qSlicerCoreApplication::application()->mrmlScene();
-    QString parentNodeID = this->AnnotationsLogic->GetTopLevelHierarchyNodeID();
-    vtkMRMLAnnotationHierarchyNode* newnode
-    = vtkMRMLAnnotationHierarchyNode::New();
-    scene->AddNode(newnode);
-    newnode->HideFromEditorsOff();
-    newnode->SetName(scene->GetUniqueNameByString(basename));
-    newnode->SetParentNodeID(parentNodeID.toLatin1());
-    this->AnnotationsLogic->AddDisplayNodeForHierarchyNode(newnode);
-    return newnode;
+  return NULL;
   }
-  else
-  {
-    return NULL;
-  }
+
+  QString parentNodeID = this->AnnotationsLogic->GetTopLevelHierarchyNodeID();
+  vtkSmartPointer<vtkMRMLAnnotationHierarchyNode> newNode
+    = vtkSmartPointer<vtkMRMLAnnotationHierarchyNode>::New();
+  newNode->HideFromEditorsOff();
+  newNode->SetName(scene->GetUniqueNameByString(basename));
+  newNode->SetParentNodeID(parentNodeID.toLatin1());
+  scene->AddNode(newNode.GetPointer());
+  this->AnnotationsLogic->AddDisplayNodeForHierarchyNode(newNode.GetPointer());
+  return newNode.GetPointer();
 }
 
 
