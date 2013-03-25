@@ -641,7 +641,7 @@ void qSlicerPathPlannerTableModel
             QString timeStamp = QTime::currentTime().toString();
             QByteArray byteArray(timeStamp.toAscii());
             const char *timeStampStr = byteArray.constData();
-            item->setText(timeStampStr);                
+            item->setText(timeStampStr);
           }
         }
         else

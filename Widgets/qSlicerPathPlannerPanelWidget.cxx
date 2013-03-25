@@ -49,6 +49,8 @@
 #include "vtkSlicerAnnotationModuleLogic.h"
 #include "vtkSlicerCLIModuleLogic.h"
 
+#include "qtableview.h"
+
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_PathPlanner
 class qSlicerPathPlannerPanelWidgetPrivate
@@ -166,9 +168,29 @@ qSlicerPathPlannerPanelWidget
   d->TargetPointsTableModel->setCoordinateLabel(qSlicerPathPlannerTableModel::LABEL_RAS_TARGET);
   d->PathsTableModel->setCoordinateLabel(qSlicerPathPlannerTableModel::LABEL_RAS_PATH);
   
+  // set model
   d->EntryPointsTable->setModel(d->EntryPointsTableModel);
   d->TargetPointsTable->setModel(d->TargetPointsTableModel);
   d->PathsTable->setModel(d->PathsTableModel);
+  
+  // test codes
+  // set item selectors
+  this->selectionEntryPointsTableModel = d->EntryPointsTable->selectionModel();
+  this->selectionTargetPointsTableModel = d->TargetPointsTable->selectionModel();
+  this->selectionPathsTableModel = d->PathsTable->selectionModel();
+  
+  // test codes
+  // ------------------------------
+  QModelIndex topLeft;
+  QModelIndex bottomRight;
+  
+  topLeft = d->TargetPointsTableModel->index(0,0,QModelIndex());
+  bottomRight = d->TargetPointsTableModel->index(0,4,QModelIndex());
+  
+  QItemSelection selection(topLeft, bottomRight);
+  this->selectionTargetPointsTableModel->select(selection, QItemSelectionModel::Select);
+  // ------------------------------
+  
  
   if (d->EntryPointsAnnotationNodeSelector)
   {
@@ -282,6 +304,31 @@ qSlicerPathPlannerPanelWidget
             this, SLOT(switchCurrentAnotationNode(int)));    
   }
 
+  
+  // test code
+  if (d->TargetPointsTable)
+  {
+    //connect(d->TargetPointsTable, SLOT(selectRow(int row)),
+    //        this, SLOT(selectTargetPoint(int row)));    
+    //connect(d->TargetPointsTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &selected, const QItemSelection &deselected)),
+    //        this, SLOT(selectTargetPoint(const QItemSelection &selected, const QItemSelection &deselected)));    
+    connect(d->TargetPointsTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)),
+            this, SLOT(selectTargetPoint(const QItemSelection, const QItemSelection)));    
+    connect(d->TargetPointsTable->horizontalHeader(), SIGNAL(sectionClicked(int)),
+            this, SLOT(selectTargetPointTable(int)));    
+    //connect(d->TargetPointsTable, SIGNAL(selectionChanged(const QItemSelection &selected, const QItemSelection &deselected)),
+    //        this, SLOT(selectTargetPoint(const QItemSelection &selected, const QItemSelection &deselected)));    
+  }
+
+
+  // test code
+  if (d->EntryPointsTable)
+  {
+    connect(d->EntryPointsTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)),
+            this, SLOT(selectEntryPoint(const QItemSelection, const QItemSelection)));    
+  }
+  
+  
   // test code
   if (d->addPathButton)
   {
@@ -731,6 +778,61 @@ void qSlicerPathPlannerPanelWidget
 }
 
 
+// test code
+//-----------------------------------------------------------------------------
+void qSlicerPathPlannerPanelWidget
+::selectTargetPoint(const QItemSelection &selected, const QItemSelection &deselected)
+{
+  Q_D(qSlicerPathPlannerPanelWidget);
+      
+  //d->TargetPointsTable->selectionModel()->qitem
+  
+  // test code
+  //this->selectionTargetPointsTableModel->select(selected, QItemSelectionModel::Rows | QItemSelectionModel::Select); 
+
+  QModelIndexList indexes = this->selectionTargetPointsTableModel->selectedIndexes();
+  QModelIndex index;
+  
+  
+  foreach(index, indexes)
+  {
+    //QString text = QString("(%1, %2)").arg(index.row()).arg(index.column());
+    //d->TargetPointsTableModel->setData(index,text);
+    std::cout << "selected TargetPoint items = (" << index.row() << "," << index.column() << ")" << std::endl;    
+  }
+  
+  //std::cout << "selectTargetPoint " << std::endl;
+  
+}
+
+
+// test code
+//-----------------------------------------------------------------------------
+void qSlicerPathPlannerPanelWidget
+::selectEntryPoint(const QItemSelection &selected, const QItemSelection &deselected)
+{
+  Q_D(qSlicerPathPlannerPanelWidget);
+  
+  QModelIndexList indexes = this->selectionEntryPointsTableModel->selectedIndexes();
+  QModelIndex index;
+  
+  foreach(index, indexes)
+  {
+    std::cout << "selected EntryPoint items = (" << index.row() << "," << index.column() << ")" << std::endl;    
+  }  
+}
+
+
+//-----------------------------------------------------------------------------
+void qSlicerPathPlannerPanelWidget
+::selectTargetPointTable(int i)
+{
+  Q_D(qSlicerPathPlannerPanelWidget);
+  
+  std::cout << "selectTargetPointTableRow =  " << i << std::endl;
+  
+}
+            
 //-----------------------------------------------------------------------------
 qSlicerPathPlannerPanelWidget
 ::~qSlicerPathPlannerPanelWidget()

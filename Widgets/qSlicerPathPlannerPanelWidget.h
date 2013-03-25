@@ -30,6 +30,7 @@
 
 // test code
 //#include "vtkMRMLAnnotationNode"
+#include "qtableview.h"
 
 #define SELECTENTRYPOINTLIST 0
 #define SELECTTARGETPOINTLIST 2
@@ -52,10 +53,23 @@ public:
   virtual ~qSlicerPathPlannerPanelWidget();
   int toggleSwitchFlag;
   
+  // test codes: pointers for item selection
+  QItemSelectionModel *selectionEntryPointsTableModel;
+  QItemSelectionModel *selectionTargetPointsTableModel;
+  QItemSelectionModel *selectionPathsTableModel;
+  
 
 public slots:
   virtual void setMRMLScene(vtkMRMLScene *newScene);
+  //void selectTargetPoint(const QItemSelection &selected,
+  //                       const QItemSelection &deselected);
+  void selectTargetPoint(const QItemSelection &selected,
+                         const QItemSelection &deselected);
+  void selectEntryPoint(const QItemSelection &selected,
+                         const QItemSelection &deselected);
 
+  void selectTargetPointTable(int);  
+  
   // test code
   void setTrackerTransform(vtkMRMLNode*);
   void onTrackerTransformModified();
@@ -72,7 +86,7 @@ protected slots:
   void addEntryPointButtonClicked();
   void switchCurrentAnotationNode(int);
   void addPathRow();
-  
+    
 protected:
   QScopedPointer<qSlicerPathPlannerPanelWidgetPrivate> d_ptr;
 
