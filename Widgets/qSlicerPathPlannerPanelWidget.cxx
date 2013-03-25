@@ -179,18 +179,19 @@ qSlicerPathPlannerPanelWidget
   this->selectionTargetPointsTableModel = d->TargetPointsTable->selectionModel();
   this->selectionPathsTableModel = d->PathsTable->selectionModel();
   
+  /*
   // test codes
   // ------------------------------
   QModelIndex topLeft;
   QModelIndex bottomRight;
   
   topLeft = d->TargetPointsTableModel->index(0,0,QModelIndex());
-  bottomRight = d->TargetPointsTableModel->index(0,4,QModelIndex());
+  bottomRight = d->TargetPointsTableModel->index(0,5,QModelIndex());
   
   QItemSelection selection(topLeft, bottomRight);
   this->selectionTargetPointsTableModel->select(selection, QItemSelectionModel::Select);
   // ------------------------------
-  
+  */
  
   if (d->EntryPointsAnnotationNodeSelector)
   {
@@ -802,6 +803,21 @@ void qSlicerPathPlannerPanelWidget
   }
   
   //std::cout << "selectTargetPoint " << std::endl;
+  
+  // reset focus
+  this->selectionTargetPointsTableModel
+    ->select(selected, QItemSelectionModel::Deselect | QItemSelectionModel::Columns);
+  
+  // reset entry point
+  QModelIndex topLeft;
+  QModelIndex bottomRight;
+  
+  topLeft = d->EntryPointsTableModel->index(0,0,QModelIndex());
+  bottomRight = d->EntryPointsTableModel->index(0,5,QModelIndex());
+  
+  QItemSelection selection(topLeft, bottomRight);
+  this->selectionEntryPointsTableModel->select(selection, QItemSelectionModel::Deselect | QItemSelectionModel::Columns);
+  
   
 }
 
