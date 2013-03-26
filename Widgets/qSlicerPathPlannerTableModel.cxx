@@ -370,10 +370,6 @@ void qSlicerPathPlannerTableModel
 
   
   // test code
-  //std::cout << "selectedTargetPointItemRow = " << selectedTargetPointItemRow << std::endl;  
-  //std::cout << "selectedTargetPointItemColumn = " << selectedTargetPointItemColumn << std::endl;  
-  //std::cout << "selectedEntryPointItemRow = " << selectedEntryPointItemRow << std::endl;  
-  //std::cout << "selectedEntryPointItemColumn = " << selectedEntryPointItemColumn << std::endl;  
   std::cout << "updatedTable" << std::endl;  
 
   if (d->HierarchyNode == 0)
@@ -692,15 +688,21 @@ void qSlicerPathPlannerTableModel
           //str="Set Target";
           if(this->selectedPathsTableColumn != RESET && this->selectedTargetPointItemRow != RESET)
           {
-            item->setText("SET!!");
+            //item->setText(this->targetPointName);
+            item->setText("Set!!");            
           }else{
             item->setText("Set Target Point");            
           }
         }
         else if(j==1)
         {
-          //item->setText(str);
-          item->setText("Set Entry Point");                    
+          if(this->selectedPathsTableColumn != RESET && this->selectedEntryPointItemRow != RESET)
+          {
+            //item->setText(this->entryPointName);
+            item->setText("Set!!");            
+          }else{
+            item->setText("Set Entry Point");                    
+          }
         }
         else if(j==2) 
         { // get distance
@@ -890,6 +892,23 @@ void qSlicerPathPlannerTableModel
               rnode->SetName(str);
               break;
             }
+              
+            // target point name
+            case 1:
+            {
+              this->targetPointName[i] = qstr.toAscii();
+              std::cout << "this->targetPointName[i] = "<< this->targetPointName[i] << std::endl;            
+              break;
+            }
+
+            // entry point name
+            case 2:
+            {
+              this->entryPointName[i] = qstr.toAscii();
+              std::cout << "this->entryPointName[i] = "<< this->entryPointName[i] << std::endl;            
+              break;
+            }
+            
             // distance  
             case 3:
             {

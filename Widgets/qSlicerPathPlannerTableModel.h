@@ -82,6 +82,8 @@ public:
   void addPoint(double x, double y, double z);
   void addRuler(void);
   void initList(int);
+  const char** targetPointName;
+  const char** entryPointName;
 
 public slots:
   void setMRMLScene(vtkMRMLScene *newScene);

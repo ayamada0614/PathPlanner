@@ -911,6 +911,10 @@ void qSlicerPathPlannerPanelWidget
       d->PathsTableModel->selectedEntryPointItemColumn = index.column();
       //d->PathsTableModel->updateTable();
       d->PathsTableModel->updateRulerTable();
+      
+      // save the 
+      //d->PathsTableModel->updateRulerTable();
+      
     }
   }
 }
