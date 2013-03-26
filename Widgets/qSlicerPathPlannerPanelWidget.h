@@ -86,6 +86,9 @@ public slots:
 
   void setEntryPointsAnnotationNode(vtkMRMLNode*);  
   void setTargetPointsAnnotationNode(vtkMRMLNode*);
+  // test code
+  void setPathsAnnotationNode(vtkMRMLNode*);
+  
   void enter();  
     
 protected slots:

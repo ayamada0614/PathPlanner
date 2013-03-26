@@ -521,7 +521,7 @@ void qSlicerPathPlannerTableModel
     
     // test code
     // the ruler is locked.
-    //fid->SetLocked(!fid->GetLocked());
+    fid->SetLocked(!fid->GetLocked());
 
     fid->SetName(ss.str().c_str());
     d->Scene->AddNode(fid);
@@ -530,6 +530,7 @@ void qSlicerPathPlannerTableModel
     //fid->GetAnnotationPointDisplayNode()->SetGlyphScale(5);
     //fid->GetAnnotationPointDisplayNode()->SetGlyphType(vtkMRMLAnnotationPointDisplayNode::Sphere3D);    
     
+    std::cout << "AddRuler!! " << std::endl;  
     
     /*
     fid->SetName(ss.str().c_str());
@@ -801,7 +802,14 @@ void qSlicerPathPlannerTableModel
         }
       }
     }
-  
+
+  /*
+  // test code
+  if(this->selectedPathsTableRow != RESET)
+  {
+    this->updateRulerTable();
+  } 
+  */
   // test
   std::cout << "finish onItemChanged()" << std::endl;
   

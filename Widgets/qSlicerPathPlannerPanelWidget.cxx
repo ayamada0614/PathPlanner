@@ -202,6 +202,7 @@ qSlicerPathPlannerPanelWidget
             d->EntryPointsTableModel, SLOT(setNode(vtkMRMLNode*)));
     connect(d->EntryPointsAnnotationNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
             this, SLOT(setEntryPointsAnnotationNode(vtkMRMLNode*)));
+    
     if (scene)
     {
       d->EntryPointsAnnotationNodeSelector->setMRMLScene(scene);
@@ -271,6 +272,11 @@ qSlicerPathPlannerPanelWidget
             d->PathsTableModel, SLOT(setNode(vtkMRMLNode*)));
     //connect(d->ImagePointsAnnotationNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
     //        this, SLOT(setPhysicalPointsAnnotationNode(vtkMRMLNode*)));
+
+    // test code
+    connect(d->EntryPointsAnnotationNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+            this, SLOT(setPathsAnnotationNode(vtkMRMLNode*)));
+    
     if (scene)
     {
       d->PathsAnnotationNodeSelector->setMRMLScene(scene);
@@ -503,6 +509,22 @@ void qSlicerPathPlannerPanelWidget
 //-----------------------------------------------------------------------------
 void qSlicerPathPlannerPanelWidget
 ::setEntryPointsAnnotationNode(vtkMRMLNode* node)
+{
+  Q_D(qSlicerPathPlannerPanelWidget);
+  
+  vtkMRMLAnnotationHierarchyNode* hnode;
+  hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(node);
+  if (hnode)
+  {
+    d->AnnotationsLogic->SetActiveHierarchyNodeID(hnode->GetID());
+  }
+}
+
+
+// test code
+//-----------------------------------------------------------------------------
+void qSlicerPathPlannerPanelWidget
+::setPathsAnnotationNode(vtkMRMLNode* node)
 {
   Q_D(qSlicerPathPlannerPanelWidget);
   
@@ -902,6 +924,7 @@ void qSlicerPathPlannerPanelWidget
     
     d->PathsTableModel->selectedPathsTableRow = index.row();
     d->PathsTableModel->selectedPathsTableColumn = index.column();
+    // if you execute the under line, the path table will be disappeared.
     //d->PathsTableModel->updateTable();
   }
   
