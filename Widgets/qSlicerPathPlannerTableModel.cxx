@@ -880,20 +880,19 @@ void qSlicerPathPlannerTableModel
         if (id == rnode->GetID())
         {
           QString qstr = item->text();
-          //double coord[4];
           double value;
           switch (item->column())
           {
+            // path name
             case 0:
             {
               const char* str = qstr.toAscii();
               rnode->SetName(str);
               break;
             }
-              
-            case 4:
+            // distance  
+            case 3:
             {
-              value = rnode->GetDistanceMeasurement();
               value = qstr.toDouble();
               rnode->SetDistanceMeasurement(value);
               break;
