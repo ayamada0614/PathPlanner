@@ -847,7 +847,7 @@ void qSlicerPathPlannerPanelWidget
     {
       //QString text = QString("(%1, %2)").arg(index.row()).arg(index.column());
       //d->TargetPointsTableModel->setData(index,text);
-      //std::cout << "selected TargetPoint items = (" << index.row() << "," << index.column() << ")" << std::endl;  
+      std::cout << "selected TargetPoint items = (" << index.row() << "," << index.column() << ")" << std::endl;  
     
       //i = index.row();
       //std::cout << "i = index.row() = " << i << std::endl;  

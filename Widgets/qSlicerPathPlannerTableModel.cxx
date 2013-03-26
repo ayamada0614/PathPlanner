@@ -647,7 +647,7 @@ void qSlicerPathPlannerTableModel
     {
       
       // test code
-      std::cout << "if(fnode)" << std::endl;
+      //std::cout << "if(fnode)" << std::endl;
       
       
       QStandardItem* item = this->invisibleRootItem()->child(i, 0);
@@ -686,17 +686,30 @@ void qSlicerPathPlannerTableModel
         {
           //str.setNum(fnode->GetFiducialCoordinates()[j]);
           //str="Set Target";
-          if(this->selectedPathsTableColumn != RESET && this->selectedTargetPointItemRow != RESET)
+          //std::cout << "this->selectedPathsTableColumn = " << this->selectedPathsTableColumn << "," << i << std::endl;            
+          if(this->selectedPathsTableRow == i && this->selectedTargetPointItemRow != RESET)
           {
             //item->setText(this->targetPointName);
-            item->setText("Set!!");            
+            //item->setText("Set!!");
+
+            QString string;
+            //string.setNum(100);// = this->targetPointName[i];
+            const char* test[10];
+            test[0] = "sample";
+            //string.append(this->targetPointName[i]);
+            string.append(test[0]);
+            
+            //this->targetPointName[i] = "text code";
+            //item->setText(this->targetPointName[i]);
+            item->setText(string);
           }else{
             item->setText("Set Target Point");            
+            //item->setText(this->targetPointName[i]);            
           }
         }
         else if(j==1)
         {
-          if(this->selectedPathsTableColumn != RESET && this->selectedEntryPointItemRow != RESET)
+          if(this->selectedPathsTableRow == i && this->selectedEntryPointItemRow != RESET)
           {
             //item->setText(this->entryPointName);
             item->setText("Set!!");            
@@ -897,7 +910,8 @@ void qSlicerPathPlannerTableModel
             case 1:
             {
               this->targetPointName[i] = qstr.toAscii();
-              std::cout << "this->targetPointName[i] = "<< this->targetPointName[i] << std::endl;            
+              //std::cout << "this->targetPointName[i] = "<< this->targetPointName[i] << std::endl;            
+              //printf("%s\n", this->targetPointName[i]);            
               break;
             }
 
