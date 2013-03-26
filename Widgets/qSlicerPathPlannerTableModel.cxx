@@ -880,7 +880,8 @@ void qSlicerPathPlannerTableModel
         if (id == rnode->GetID())
         {
           QString qstr = item->text();
-          double coord[4];
+          //double coord[4];
+          double value;
           switch (item->column())
           {
             case 0:
@@ -889,14 +890,15 @@ void qSlicerPathPlannerTableModel
               rnode->SetName(str);
               break;
             }
+              
+            case 4:
+            {
+              value = rnode->GetDistanceMeasurement();
+              value = qstr.toDouble();
+              rnode->SetDistanceMeasurement(value);
+              break;
+            }
               /*
-               case 1:
-               {
-               fnode->GetFiducialCoordinates(coord);
-               coord[0] = qstr.toDouble();
-               fnode->SetFiducialCoordinates(coord);
-               break;
-               }              
                case 2:
                {
                fnode->GetFiducialCoordinates(coord);
