@@ -156,8 +156,17 @@ qSlicerPathPlannerTableModel
 {
   Q_D(qSlicerPathPlannerTableModel);
   d->init();
+  
+  // initialize
   this->addRowFlag = 0;
   this->nItemsPrevious = 1;
+  
+  this->selectedTargetPointItemRow = RESET;
+  this->selectedTargetPointItemColumn = RESET;
+  this->selectedEntryPointItemRow = RESET;
+  this->selectedEntryPointItemColumn = RESET;
+  this->selectedPathsTableRow = RESET;
+  this->selectedPathsTableColumn = RESET;
 }
 
 qSlicerPathPlannerTableModel
@@ -328,6 +337,13 @@ void qSlicerPathPlannerTableModel
 ::updateTable()
 {
   Q_D(qSlicerPathPlannerTableModel);
+
+  
+  // test code
+  std::cout << "selectedTargetPointItemRow = " << selectedTargetPointItemRow << std::endl;  
+  std::cout << "selectedTargetPointItemColumn = " << selectedTargetPointItemColumn << std::endl;  
+  std::cout << "selectedEntryPointItemRow = " << selectedEntryPointItemRow << std::endl;  
+  std::cout << "selectedEntryPointItemColumn = " << selectedEntryPointItemColumn << std::endl;  
 
   if (d->HierarchyNode == 0)
     {
@@ -503,8 +519,9 @@ void qSlicerPathPlannerTableModel
     difference[2] = tipPosition[0][2] - tipPosition[1][2];    
     fid->SetDistanceMeasurement(sqrt(difference[0]*difference[0]+difference[1]*difference[1]+difference[2]*difference[2]));
     
+    // test code
     // the ruler is locked.
-    fid->SetLocked(!fid->GetLocked());
+    //fid->SetLocked(!fid->GetLocked());
 
     fid->SetName(ss.str().c_str());
     d->Scene->AddNode(fid);
@@ -535,7 +552,16 @@ void qSlicerPathPlannerTableModel
 void qSlicerPathPlannerTableModel
 ::updateRulerTable()
 {
+  
   Q_D(qSlicerPathPlannerTableModel);
+  
+  
+  // test code
+  std::cout << "UpdateRulerTable() selectedTargetPointItemRow = " << selectedTargetPointItemRow << std::endl;  
+  std::cout << "UpdateRulerTable() selectedTargetPointItemColumn = " << selectedTargetPointItemColumn << std::endl;  
+  std::cout << "UpdateRulerTable() selectedEntryPointItemRow = " << selectedEntryPointItemRow << std::endl;  
+  std::cout << "UpdateRulerTable() selectedEntryPointItemColumn = " << selectedEntryPointItemColumn << std::endl;  
+  
   
   if (d->HierarchyNode == 0)
   {
@@ -599,6 +625,11 @@ void qSlicerPathPlannerTableModel
       item->setText(fnode->GetName());
       item->setData(fnode->GetID(),qSlicerPathPlannerTableModel::NodeIDRole);
       
+      // test code
+      //item->getText(fnode->GetName());
+      std::cout << "fnode->GetName() = " << fnode->GetName() << std::endl;  
+
+      
       for (int j = 0; j < 5; j ++)
       {
         QStandardItem* item = this->invisibleRootItem()->child(i, j+1);
@@ -621,7 +652,12 @@ void qSlicerPathPlannerTableModel
         {
           //str.setNum(fnode->GetFiducialCoordinates()[j]);
           //str="Set Target";
-          item->setText("Set Target Point");          
+          if(this->selectedPathsTableColumn != RESET && this->selectedTargetPointItemRow != RESET)
+          {
+            item->setText("SET!!");
+          }else{
+            item->setText("Set Target Point");            
+          }
         }
         else if(j==1)
         {
@@ -682,15 +718,21 @@ void qSlicerPathPlannerTableModel
 
   if (item == this->invisibleRootItem())
     {
+    // test code
+    std::cout << "item == this->invisibleRootItem()" << std::endl;
     return;
     }
   if (d->PendingItemModified >= 0)
     {
+    // test code
+    std::cout << "d->PendingItemModified >= 0" << std::endl;
     return;
     }
 
   // TODO:  item->parent()-> does not work here...
   QStandardItem* nameItem = this->invisibleRootItem()->child(item->row(), 0);
+  // test code
+  std::cout << "nameItem = " << nameItem << std::endl;
   if (nameItem)
     {
     QString id = nameItem->data(qSlicerPathPlannerTableModel::NodeIDRole).toString();
@@ -701,6 +743,10 @@ void qSlicerPathPlannerTableModel
     int nItems = collection->GetNumberOfItems();
     int nFiducials = 0;
     collection->InitTraversal();
+
+    // test code
+    std::cout << "nItems = " << nItems << std::endl;
+      
     for (int i = 0; i < nItems; i ++)
       {
       vtkMRMLAnnotationFiducialNode* fnode;
@@ -743,6 +789,14 @@ void qSlicerPathPlannerTableModel
             }
           fnode->Modified();
           this->updateTable();
+          // test code
+          if(this->selectedPathsTableRow != RESET)
+          {
+            this->updateRulerTable();
+            std::cout << "this->selectedPathsTableRow != RESET" << std::endl;            
+          }else{
+            std::cout << "this->selectedPathsTableRow == RESET" << std::endl;            
+          }
           }
         }
       }
@@ -828,6 +882,11 @@ void qSlicerPathPlannerTableModel
   
   //this->addPoint(1,1,1);
   this->updateTable();
-
+  // test code
+  if(this->selectedPathsTableRow != RESET)
+  {
+    this->updateRulerTable();
+  }
+  
 }
 

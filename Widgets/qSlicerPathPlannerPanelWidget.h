@@ -32,9 +32,14 @@
 //#include "vtkMRMLAnnotationNode"
 #include "qtableview.h"
 
+// test code
+//#include "QVarient.h"
+
 #define SELECTENTRYPOINTLIST 0
 #define SELECTTARGETPOINTLIST 2
 #define SELECTPATHLIST 3 // test
+
+#define RESET -1
 
 class qSlicerPathPlannerPanelWidgetPrivate;
 class vtkObject;
@@ -58,6 +63,9 @@ public:
   QItemSelectionModel *selectionTargetPointsTableModel;
   QItemSelectionModel *selectionPathsTableModel;
   
+  // test code
+  //QVariant data(const QModelIndex &index, int role) const;
+  
 
 public slots:
   virtual void setMRMLScene(vtkMRMLScene *newScene);
@@ -67,6 +75,8 @@ public slots:
                          const QItemSelection &deselected);
   void selectEntryPoint(const QItemSelection &selected,
                          const QItemSelection &deselected);
+  void selectPathsTable(const QItemSelection &selected,
+                        const QItemSelection &deselected);
 
   void selectTargetPointTable(int);  
   

@@ -21,6 +21,8 @@
 #ifndef __qSlicerPathPlannerTableModel_h
 #define __qSlicerPathPlannerTableModel_h
 
+#define RESET -1
+
 //#include <QAbstractTableModel>
 #include <QStandardItemModel>
 
@@ -61,6 +63,14 @@ public:
   };
   int addRowFlag;
   int nItemsPrevious;
+  
+  // test code
+  int selectedTargetPointItemRow;
+  int selectedTargetPointItemColumn;
+  int selectedEntryPointItemRow;
+  int selectedEntryPointItemColumn;
+  int selectedPathsTableRow;
+  int selectedPathsTableColumn;
 
 protected:
   qSlicerPathPlannerTableModel(qSlicerPathPlannerTableModelPrivate* pimpl, QObject *parent=0);

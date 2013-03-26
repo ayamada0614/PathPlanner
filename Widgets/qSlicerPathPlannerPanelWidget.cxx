@@ -51,6 +51,8 @@
 
 #include "qtableview.h"
 
+
+
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_PathPlanner
 class qSlicerPathPlannerPanelWidgetPrivate
@@ -329,6 +331,14 @@ qSlicerPathPlannerPanelWidget
             this, SLOT(selectEntryPoint(const QItemSelection, const QItemSelection)));    
   }
   
+  
+  // test code
+  if (d->PathsTable)
+  {
+    connect(d->PathsTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)),
+            this, SLOT(selectPathsTable(const QItemSelection, const QItemSelection)));    
+  }
+
   
   // test code
   if (d->addPathButton)
@@ -794,16 +804,43 @@ void qSlicerPathPlannerPanelWidget
   QModelIndexList indexes = this->selectionTargetPointsTableModel->selectedIndexes();
   QModelIndex index;
   
+  QStringList stringList;
+  QString string;
   
-  foreach(index, indexes)
+  int i;
+  
+  // selected row and column identification
+  if(d->PathsTableModel->selectedPathsTableColumn != RESET)
   {
-    //QString text = QString("(%1, %2)").arg(index.row()).arg(index.column());
-    //d->TargetPointsTableModel->setData(index,text);
-    std::cout << "selected TargetPoint items = (" << index.row() << "," << index.column() << ")" << std::endl;    
+    foreach(index, indexes)
+    {
+      //QString text = QString("(%1, %2)").arg(index.row()).arg(index.column());
+      //d->TargetPointsTableModel->setData(index,text);
+      std::cout << "selected TargetPoint items = (" << index.row() << "," << index.column() << ")" << std::endl;  
+    
+      i = index.row();
+      std::cout << "i = index.row() = " << i << std::endl;  
+    
+      d->PathsTableModel->selectedTargetPointItemRow = index.row();
+      d->PathsTableModel->selectedTargetPointItemColumn = index.column();
+      //d->PathsTableModel->updateTable();
+      d->PathsTableModel->updateRulerTable();
+    
+    
+    
+      //std::cout << "TargetPoint items = (" << stringList.at(index.row()) << ")" << std::endl;
+      //stringList.at(index.row());
+      //stringList.at(index.row());
+      //const char *s = qPrintable(stringList.at(index.row()));
+      //std::cout << "qPrintable = " << s << std::endl;  
+      //d->TargetPointsTableModel->getData(index, string);
+    }
   }
   
   //std::cout << "selectTargetPoint " << std::endl;
   
+  // test code -- Los nfeles
+  /*
   // reset focus
   this->selectionTargetPointsTableModel
     ->select(selected, QItemSelectionModel::Deselect | QItemSelectionModel::Columns);
@@ -817,7 +854,7 @@ void qSlicerPathPlannerPanelWidget
   
   QItemSelection selection(topLeft, bottomRight);
   this->selectionEntryPointsTableModel->select(selection, QItemSelectionModel::Deselect | QItemSelectionModel::Columns);
-  
+  */
   
 }
 
@@ -832,11 +869,50 @@ void qSlicerPathPlannerPanelWidget
   QModelIndexList indexes = this->selectionEntryPointsTableModel->selectedIndexes();
   QModelIndex index;
   
+  // selected row and column identification
+  if(d->PathsTableModel->selectedPathsTableColumn != RESET)
+  {
+    foreach(index, indexes)
+    {
+      std::cout << "selected EntryPoint items = (" << index.row() << "," << index.column() << ")" << std::endl;
+    
+      d->PathsTableModel->selectedEntryPointItemRow = index.row();
+      d->PathsTableModel->selectedEntryPointItemColumn = index.column();
+      //d->PathsTableModel->updateTable();
+      d->PathsTableModel->updateRulerTable();
+    }
+  }
+}
+
+
+// test code
+//-----------------------------------------------------------------------------
+void qSlicerPathPlannerPanelWidget
+::selectPathsTable(const QItemSelection &selected, const QItemSelection &deselected)
+{
+  Q_D(qSlicerPathPlannerPanelWidget);
+  
+  QModelIndexList indexes = this->selectionPathsTableModel->selectedIndexes();
+  QModelIndex index;
+  
+  // selected row and column identification
   foreach(index, indexes)
   {
-    std::cout << "selected EntryPoint items = (" << index.row() << "," << index.column() << ")" << std::endl;    
-  }  
+    std::cout << "selected PathsTable items = (" << index.row() << "," << index.column() << ")" << std::endl;
+    
+    d->PathsTableModel->selectedPathsTableRow = index.row();
+    d->PathsTableModel->selectedPathsTableColumn = index.column();
+    //d->PathsTableModel->updateTable();
+  }
+  
+  d->PathsTableModel->selectedTargetPointItemRow = RESET;
+  d->PathsTableModel->selectedTargetPointItemColumn = RESET;
+  d->PathsTableModel->selectedEntryPointItemRow = RESET;
+  d->PathsTableModel->selectedEntryPointItemColumn = RESET;
+
+  
 }
+
 
 
 //-----------------------------------------------------------------------------
@@ -854,3 +930,13 @@ qSlicerPathPlannerPanelWidget
 ::~qSlicerPathPlannerPanelWidget()
 {
 }
+
+
+// test code
+/*
+QVariant qSlicerPathPlannerPanelWidget
+::data(const QModelIndex &index, int role) const
+{
+  
+}
+*/
