@@ -276,6 +276,8 @@ qSlicerPathPlannerPanelWidget
     // test code
     connect(d->EntryPointsAnnotationNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
             this, SLOT(setPathsAnnotationNode(vtkMRMLNode*)));
+    connect(d->PathsAnnotationNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+            this, SLOT(setPathsAnnotationNode(vtkMRMLNode*)));
     
     if (scene)
     {
@@ -296,6 +298,8 @@ qSlicerPathPlannerPanelWidget
             this, SLOT(deleteEntryPoints()));
     connect(d->ListClear, SIGNAL(clicked()),
             this, SLOT(deleteTargetPoints()));
+    //connect(d->ListClear, SIGNAL(clicked()),
+    //        this, SLOT(deletePaths()));
     
     //test
     //connect(d->ListClear, SIGNAL(clicked()),
@@ -335,6 +339,8 @@ qSlicerPathPlannerPanelWidget
   {
     connect(d->EntryPointsTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)),
             this, SLOT(selectEntryPoint(const QItemSelection, const QItemSelection)));    
+    connect(d->EntryPointsTable->horizontalHeader(), SIGNAL(sectionClicked(int)),
+            this, SLOT(selectEntryPointTable(int)));    
   }
   
   
@@ -343,6 +349,8 @@ qSlicerPathPlannerPanelWidget
   {
     connect(d->PathsTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)),
             this, SLOT(selectPathsTable(const QItemSelection, const QItemSelection)));    
+    connect(d->PathsTable->horizontalHeader(), SIGNAL(sectionClicked(int)),
+            this, SLOT(selectPathsTable(int)));    
   }
 
   
@@ -442,6 +450,11 @@ void qSlicerPathPlannerPanelWidget
   {
     d->TargetPointsAnnotationNodeSelector->setMRMLScene(newScene);
   }
+  
+  if (d->PathsAnnotationNodeSelector)
+  {
+    d->PathsAnnotationNodeSelector->setMRMLScene(newScene);
+  }  
  
   if (d->EntryPointsTableModel)
   {
@@ -456,10 +469,6 @@ void qSlicerPathPlannerPanelWidget
     d->PathsTableModel->setMRMLScene(newScene);
   }  
 
-  if (d->PathsAnnotationNodeSelector)
-  {
-    d->PathsAnnotationNodeSelector->setMRMLScene(newScene);
-  }
   
   // test code
   if (d->TrackerTransformNodeSelector)
@@ -829,7 +838,7 @@ void qSlicerPathPlannerPanelWidget
   QStringList stringList;
   QString string;
   
-  int i;
+  //int i;
   
   // selected row and column identification
   if(d->PathsTableModel->selectedPathsTableColumn != RESET)
@@ -838,10 +847,10 @@ void qSlicerPathPlannerPanelWidget
     {
       //QString text = QString("(%1, %2)").arg(index.row()).arg(index.column());
       //d->TargetPointsTableModel->setData(index,text);
-      std::cout << "selected TargetPoint items = (" << index.row() << "," << index.column() << ")" << std::endl;  
+      //std::cout << "selected TargetPoint items = (" << index.row() << "," << index.column() << ")" << std::endl;  
     
-      i = index.row();
-      std::cout << "i = index.row() = " << i << std::endl;  
+      //i = index.row();
+      //std::cout << "i = index.row() = " << i << std::endl;  
     
       d->PathsTableModel->selectedTargetPointItemRow = index.row();
       d->PathsTableModel->selectedTargetPointItemColumn = index.column();
@@ -896,7 +905,7 @@ void qSlicerPathPlannerPanelWidget
   {
     foreach(index, indexes)
     {
-      std::cout << "selected EntryPoint items = (" << index.row() << "," << index.column() << ")" << std::endl;
+      //std::cout << "selected EntryPoint items = (" << index.row() << "," << index.column() << ")" << std::endl;
     
       d->PathsTableModel->selectedEntryPointItemRow = index.row();
       d->PathsTableModel->selectedEntryPointItemColumn = index.column();
@@ -920,7 +929,7 @@ void qSlicerPathPlannerPanelWidget
   // selected row and column identification
   foreach(index, indexes)
   {
-    std::cout << "selected PathsTable items = (" << index.row() << "," << index.column() << ")" << std::endl;
+    //std::cout << "selected PathsTable items = (" << index.row() << "," << index.column() << ")" << std::endl;
     
     d->PathsTableModel->selectedPathsTableRow = index.row();
     d->PathsTableModel->selectedPathsTableColumn = index.column();

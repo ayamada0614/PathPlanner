@@ -109,7 +109,7 @@ void qSlicerPathPlannerTableModelPrivate
                                << "Time"
                                << "Memo");
   QObject::connect(q, SIGNAL(itemChanged(QStandardItem*)),
-                   q, SLOT(onItemChanged(QStandardItem*)));
+                   q, SLOT(onRulerItemChanged(QStandardItem*)));
   
 }
 
@@ -145,7 +145,7 @@ void qSlicerPathPlannerTableModelPrivate
                                << "Time"
                                << "Memo");
   QObject::connect(q, SIGNAL(itemChanged(QStandardItem*)),
-                   q, SLOT(onItemChanged(QStandardItem*)));
+                   q, SLOT(onRulerItemChanged(QStandardItem*)));
   
 }
 
@@ -228,7 +228,7 @@ void qSlicerPathPlannerTableModel
   vtkMRMLAnnotationHierarchyNode* hnode;
   hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(node);
   if (hnode)
-    {
+  {
     qvtkReconnect(d->HierarchyNode, node,
                   vtkMRMLHierarchyNode::ChildNodeAddedEvent,
                   this, SLOT(onMRMLChildNodeAdded(vtkObject*)));
@@ -242,23 +242,37 @@ void qSlicerPathPlannerTableModel
 
     // Disconnect slots from old child nodes
     if (d->HierarchyNode)
-      {
+    {
       vtkNew<vtkCollection> collection;
       d->HierarchyNode->GetDirectChildren(collection.GetPointer());
       int nItems = collection->GetNumberOfItems();
       collection->InitTraversal();
       for (int i = 0; i < nItems; i ++)
-        {
+      {
         vtkMRMLAnnotationFiducialNode* fnode;
         fnode = vtkMRMLAnnotationFiducialNode::SafeDownCast(collection->GetNextItemAsObject());
         if (fnode)
-          {
+        {
           qvtkDisconnect(fnode, vtkMRMLAnnotationFiducialNode::ValueModifiedEvent,
                          this, SLOT(onMRMLChildNodeValueModified(vtkObject*)));
           fnode->SetAttribute("RFTEvent", NULL);
-          }
         }
       }
+    
+      // test code
+      for (int i = 0; i < nItems; i ++)
+      {
+        vtkMRMLAnnotationRulerNode* rnode;
+        rnode = vtkMRMLAnnotationRulerNode::SafeDownCast(collection->GetNextItemAsObject());
+        if (rnode)
+        {
+          qvtkDisconnect(rnode, vtkMRMLAnnotationRulerNode::ValueModifiedEvent,
+                         this, SLOT(onMRMLChildNodeValueModified(vtkObject*)));
+          rnode->SetAttribute("RFTEvent", NULL);
+        }
+      }
+      
+    }
 
     vtkNew<vtkCollection> collection;
     // Connect slots to handle chlid node event
@@ -266,21 +280,37 @@ void qSlicerPathPlannerTableModel
     int nItems = collection->GetNumberOfItems();
     collection->InitTraversal();
     for (int i = 0; i < nItems; i ++)
-      {
+    {
       vtkMRMLAnnotationFiducialNode* fnode;
       fnode = vtkMRMLAnnotationFiducialNode::SafeDownCast(collection->GetNextItemAsObject());
       if (fnode)
-        {
+      {
         // Connect the fiducial node to onMRMLChildNodeValueModified().
         // An attribute "RFTEvent" is set "Yes" to mark that the fiducial node is connected. 
         qvtkConnect(fnode, vtkMRMLAnnotationFiducialNode::ValueModifiedEvent,
                     this, SLOT(onMRMLChildNodeValueModified(vtkObject*)));
         fnode->SetAttribute("RFTEvent", "Yes");
-        }
       }
-
-    d->HierarchyNode = hnode;
     }
+
+    // test code
+    for (int i = 0; i < nItems; i ++)
+    {
+      vtkMRMLAnnotationRulerNode* rnode;
+      rnode = vtkMRMLAnnotationRulerNode::SafeDownCast(collection->GetNextItemAsObject());
+      if (rnode)
+      {
+        // Connect the fiducial node to onMRMLChildNodeValueModified().
+        // An attribute "RFTEvent" is set "Yes" to mark that the fiducial node is connected. 
+        qvtkConnect(rnode, vtkMRMLAnnotationRulerNode::ValueModifiedEvent,
+                    this, SLOT(onMRMLChildNodeValueModified(vtkObject*)));
+        rnode->SetAttribute("RFTEvent", "Yes");
+      }
+    }
+    
+    
+    d->HierarchyNode = hnode;
+  }
 
   this->updateTable();
 
@@ -340,10 +370,11 @@ void qSlicerPathPlannerTableModel
 
   
   // test code
-  std::cout << "selectedTargetPointItemRow = " << selectedTargetPointItemRow << std::endl;  
-  std::cout << "selectedTargetPointItemColumn = " << selectedTargetPointItemColumn << std::endl;  
-  std::cout << "selectedEntryPointItemRow = " << selectedEntryPointItemRow << std::endl;  
-  std::cout << "selectedEntryPointItemColumn = " << selectedEntryPointItemColumn << std::endl;  
+  //std::cout << "selectedTargetPointItemRow = " << selectedTargetPointItemRow << std::endl;  
+  //std::cout << "selectedTargetPointItemColumn = " << selectedTargetPointItemColumn << std::endl;  
+  //std::cout << "selectedEntryPointItemRow = " << selectedEntryPointItemRow << std::endl;  
+  //std::cout << "selectedEntryPointItemColumn = " << selectedEntryPointItemColumn << std::endl;  
+  std::cout << "updatedTable" << std::endl;  
 
   if (d->HierarchyNode == 0)
     {
@@ -558,11 +589,12 @@ void qSlicerPathPlannerTableModel
   
   
   // test code
-  std::cout << "UpdateRulerTable() selectedTargetPointItemRow = " << selectedTargetPointItemRow << std::endl;  
-  std::cout << "UpdateRulerTable() selectedTargetPointItemColumn = " << selectedTargetPointItemColumn << std::endl;  
-  std::cout << "UpdateRulerTable() selectedEntryPointItemRow = " << selectedEntryPointItemRow << std::endl;  
-  std::cout << "UpdateRulerTable() selectedEntryPointItemColumn = " << selectedEntryPointItemColumn << std::endl;  
-  
+  //std::cout << "UpdateRulerTable() selectedTargetPointItemRow = " << selectedTargetPointItemRow << std::endl;  
+  //std::cout << "UpdateRulerTable() selectedTargetPointItemColumn = " << selectedTargetPointItemColumn << std::endl;  
+  //std::cout << "UpdateRulerTable() selectedEntryPointItemRow = " << selectedEntryPointItemRow << std::endl;  
+  //std::cout << "UpdateRulerTable() selectedEntryPointItemColumn = " << selectedEntryPointItemColumn << std::endl;  
+  std::cout << "updatedRulerTable" << std::endl;  
+
   
   if (d->HierarchyNode == 0)
   {
@@ -617,6 +649,11 @@ void qSlicerPathPlannerTableModel
     fnode = vtkMRMLAnnotationRulerNode::SafeDownCast(collection->GetNextItemAsObject());
     if (fnode)
     {
+      
+      // test code
+      std::cout << "if(fnode)" << std::endl;
+      
+      
       QStandardItem* item = this->invisibleRootItem()->child(i, 0);
       if (item == NULL)
       {
@@ -628,7 +665,7 @@ void qSlicerPathPlannerTableModel
       
       // test code
       //item->getText(fnode->GetName());
-      std::cout << "fnode->GetName() = " << fnode->GetName() << std::endl;  
+      //std::cout << "fnode->GetName() = " << fnode->GetName() << std::endl;  
 
       
       for (int j = 0; j < 5; j ++)
@@ -717,23 +754,20 @@ void qSlicerPathPlannerTableModel
 {
   Q_D(qSlicerPathPlannerTableModel);
 
+  // test code
+  std::cout << "onItemChanged()" << std::endl;
+  
   if (item == this->invisibleRootItem())
     {
-    // test code
-    std::cout << "item == this->invisibleRootItem()" << std::endl;
     return;
     }
   if (d->PendingItemModified >= 0)
     {
-    // test code
-    std::cout << "d->PendingItemModified >= 0" << std::endl;
     return;
     }
 
   // TODO:  item->parent()-> does not work here...
   QStandardItem* nameItem = this->invisibleRootItem()->child(item->row(), 0);
-  // test code
-  std::cout << "nameItem = " << nameItem << std::endl;
   if (nameItem)
     {
     QString id = nameItem->data(qSlicerPathPlannerTableModel::NodeIDRole).toString();
@@ -745,9 +779,6 @@ void qSlicerPathPlannerTableModel
     int nFiducials = 0;
     collection->InitTraversal();
 
-    // test code
-    std::cout << "nItems = " << nItems << std::endl;
-      
     for (int i = 0; i < nItems; i ++)
       {
       vtkMRMLAnnotationFiducialNode* fnode;
@@ -790,17 +821,10 @@ void qSlicerPathPlannerTableModel
             }
           fnode->Modified();
           this->updateTable();
-          // test code
-          if(this->selectedPathsTableRow != RESET)
-          {
-            this->updateRulerTable();
-            std::cout << "this->selectedPathsTableRow != RESET" << std::endl;            
-          }else{
-            std::cout << "this->selectedPathsTableRow == RESET" << std::endl;            
-          }
           }
         }
       }
+    
     }
 
   /*
@@ -811,9 +835,114 @@ void qSlicerPathPlannerTableModel
   } 
   */
   // test
-  std::cout << "finish onItemChanged()" << std::endl;
+  //std::cout << "finish onItemChanged()" << std::endl;
   
 }
+
+
+// test code
+void qSlicerPathPlannerTableModel
+::onRulerItemChanged(QStandardItem * item)
+{
+  Q_D(qSlicerPathPlannerTableModel);
+  
+  // test code
+  std::cout << "onRulerItemChanged()" << std::endl;  
+  
+  if (item == this->invisibleRootItem())
+  {
+    return;
+  }
+  if (d->PendingItemModified >= 0)
+  {
+    return;
+  }
+  
+  // TODO:  item->parent()-> does not work here...
+  QStandardItem* nameItem = this->invisibleRootItem()->child(item->row(), 0);
+  if (nameItem)
+  {
+    QString id = nameItem->data(qSlicerPathPlannerTableModel::NodeIDRole).toString();
+    
+    // Find ruler node from item
+    vtkNew<vtkCollection> collection;
+    d->HierarchyNode->GetDirectChildren(collection.GetPointer());
+    int nItems = collection->GetNumberOfItems();
+    int nFiducials = 0;
+    collection->InitTraversal();
+    
+    for (int i = 0; i < nItems; i ++)
+    {
+      vtkMRMLAnnotationRulerNode* rnode;
+      rnode = vtkMRMLAnnotationRulerNode::SafeDownCast(collection->GetNextItemAsObject());
+      if (rnode)
+      {
+        if (id == rnode->GetID())
+        {
+          QString qstr = item->text();
+          double coord[4];
+          switch (item->column())
+          {
+            case 0:
+            {
+              const char* str = qstr.toAscii();
+              rnode->SetName(str);
+              break;
+            }
+              /*
+               case 1:
+               {
+               fnode->GetFiducialCoordinates(coord);
+               coord[0] = qstr.toDouble();
+               fnode->SetFiducialCoordinates(coord);
+               break;
+               }              
+               case 2:
+               {
+               fnode->GetFiducialCoordinates(coord);
+               coord[1] = qstr.toDouble();
+               fnode->SetFiducialCoordinates(coord);
+               break;
+               }              
+               case 3:
+               {
+               fnode->GetFiducialCoordinates(coord);
+               coord[2] = qstr.toDouble();
+               fnode->SetFiducialCoordinates(coord);
+               break;
+               }
+               */
+          }
+          rnode->Modified();
+          //this->updateTable();
+          // test code
+          if(this->selectedPathsTableRow != RESET)
+          {
+            this->updateRulerTable();
+            std::cout << "this->selectedPathsTableRow != RESET" << std::endl;            
+          }else{
+            std::cout << "this->selectedPathsTableRow == RESET" << std::endl;            
+          }
+        }
+      }
+    }
+    
+    
+  }
+  
+  /*
+   // test code
+   if(this->selectedPathsTableRow != RESET)
+   {
+   this->updateRulerTable();
+   } 
+   */
+  // test
+  //std::cout << "finish onItemChanged()" << std::endl;
+  
+}
+
+
 
 
 void qSlicerPathPlannerTableModel
@@ -842,6 +971,24 @@ void qSlicerPathPlannerTableModel
         }
       }
     }
+
+  
+  // test code
+  for (int i = 0; i < nItems; i ++)
+  {
+    vtkMRMLAnnotationRulerNode* rnode;
+    rnode = vtkMRMLAnnotationRulerNode::SafeDownCast(collection->GetNextItemAsObject());
+    if (rnode)
+    {
+      if (!rnode->GetAttribute("RFTEvent"))
+      {
+        qvtkConnect(rnode, vtkMRMLAnnotationRulerNode::ValueModifiedEvent,
+                    this, SLOT(onMRMLChildNodeValueModified(vtkObject*)));
+        rnode->SetAttribute("RFTEvent", "Yes");
+      }
+    }
+  }
+  
   
   // test
   //this->updateTable();
@@ -862,6 +1009,21 @@ void qSlicerPathPlannerTableModel
       this->updateTable();
       }
     }
+
+  
+  // test code
+  vtkMRMLAnnotationRulerNode* rnode = vtkMRMLAnnotationRulerNode::SafeDownCast(n);
+  if (rnode && rnode->GetAttribute("RFTEvent"))
+  {
+    if (strcmp("Yes", rnode->GetAttribute("RFTEvent")) == 0)
+    {
+      qvtkDisconnect(rnode, vtkMRMLAnnotationRulerNode::ValueModifiedEvent,
+                     this, SLOT(onMRMLChildNodeValueModified(vtkObject*)));
+      rnode->SetAttribute("RFTEvent", NULL);
+      this->updateTable();
+    }
+  }
+
 }
 
 void qSlicerPathPlannerTableModel
@@ -883,13 +1045,19 @@ void qSlicerPathPlannerTableModel
 
   vtkMRMLAnnotationFiducialNode* fnode;
   fnode = vtkMRMLAnnotationFiducialNode::SafeDownCast(obj);
-
+  
   // test
   std::cout << "onMRMLChildNodeValueModified" << std::endl;
-  std::cout << "it's enough to add only UpdateTable function here" << std::endl;
+  //std::cout << "it's enough to add only UpdateTable function here" << std::endl;
   
   //this->addPoint(1,1,1);
   this->updateTable();
+  
+  /*
+  // test code
+  vtkMRMLAnnotationRulerNode* rnode;
+  rnode = vtkMRMLAnnotationRulerNode::SafeDownCast(obj);
+  */
   // test code
   if(this->selectedPathsTableRow != RESET)
   {

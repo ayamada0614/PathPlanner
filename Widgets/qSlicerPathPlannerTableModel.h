@@ -89,6 +89,8 @@ public slots:
 protected slots:
   void setNode(vtkMRMLNode* node);
   void onItemChanged(QStandardItem * item);
+  // test code
+  void onRulerItemChanged(QStandardItem * item);
   void onMRMLChildNodeAdded(vtkObject*);
   void onMRMLChildNodeRemoved(vtkObject*);
   void onMRMLChildNodeValueModified(vtkObject*);
