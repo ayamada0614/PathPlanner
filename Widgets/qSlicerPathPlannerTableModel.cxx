@@ -706,7 +706,8 @@ void qSlicerPathPlannerTableModel
         else if(j==2) 
         { // get distance
           //str.setNum(fnode->GetDistanceMeasurement());          
-          str.setNum(this->pathDistance[i]);          
+          str.setNum(this->pathDistance[i]);  
+          fnode->SetDistanceMeasurement(this->pathDistance[i]);
           item->setText(str);
         }
         else if(j==3)
@@ -897,8 +898,7 @@ void qSlicerPathPlannerTableModel
             case 1:
             {
               this->targetPointName[i] = qstr.toAscii();
-              //std::cout << "this->targetPointName[i] = "<< this->targetPointName[i] << std::endl;            
-              //printf("%s\n", this->targetPointName[i]);            
+              std::cout << "this->targetPointName[i] = "<< this->targetPointName[i] << std::endl;            
               break;
             }
 
@@ -916,7 +916,8 @@ void qSlicerPathPlannerTableModel
               //value = qstr.toDouble();
               this->pathDistance[i] = qstr.toDouble(); 
               std::cout << "this->pathDistance[i] = "<< this->pathDistance[i] << std::endl;            
-              rnode->SetDistanceMeasurement(value);
+              //rnode->SetDistanceMeasurement(value);
+              rnode->SetDistanceMeasurement(this->pathDistance[i]);
               break;
             }
               /*
@@ -1236,5 +1237,5 @@ void qSlicerPathPlannerTableModel
   difference[2] = entryPoint[2] - targetPoint[2];    
   
   this->pathDistance[row] = sqrt(difference[0]*difference[0]+difference[1]*difference[1]+difference[2]*difference[2]);
-  
+    
 }
