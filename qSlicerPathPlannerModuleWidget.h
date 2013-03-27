@@ -48,6 +48,8 @@ public slots:
   void onEntryListNodeChanged(vtkMRMLNode* newList);
   void onTargetListNodeChanged(vtkMRMLNode* newList);
   void onItemChanged(QTableWidgetItem *item);
+  void refreshEntryView();
+  void refreshTargetView();
 
 protected:
   QScopedPointer<qSlicerPathPlannerModuleWidgetPrivate> d_ptr;

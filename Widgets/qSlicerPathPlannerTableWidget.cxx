@@ -27,12 +27,14 @@
 #include "vtkSmartPointer.h"
 #include "vtkMRMLAnnotationHierarchyNode.h"
 #include "vtkMRMLInteractionNode.h"
+#include "vtkMRMLSelectionNode.h"
 
 #include "vtkSlicerAnnotationModuleLogic.h"
 #include "qSlicerAbstractCoreModule.h"
 #include "qSlicerCoreApplication.h"
 #include "qSlicerModuleManager.h"
 
+#include "qSlicerPathPlannerFiducialItem.h"
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_PathPlanner
@@ -128,12 +130,21 @@ void qSlicerPathPlannerTableWidget
 }
 
 //-----------------------------------------------------------------------------
+vtkMRMLAnnotationHierarchyNode* qSlicerPathPlannerTableWidget
+::selectedHierarchyNode()
+{
+  Q_D(qSlicerPathPlannerTableWidget);
+
+  return d->selectedHierarchyNode;
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerPathPlannerTableWidget
 ::onAddButtonClicked()
 {
   Q_D(qSlicerPathPlannerTableWidget);
 
-  if (!d->annotationLogic/* | !d->selectedHierarchyNode*/)
+  if (!d->annotationLogic | !d->selectedHierarchyNode)
     {
     return;
     }
@@ -143,6 +154,21 @@ void qSlicerPathPlannerTableWidget
   if (d->annotationLogic->GetActiveHierarchyNode() != d->selectedHierarchyNode)
     {
     d->annotationLogic->SetActiveHierarchyNodeID(d->selectedHierarchyNode->GetID());
+    }
+
+  // Set fiducial as annotation to drop in selection node
+  vtkMRMLApplicationLogic *mrmlAppLogic = d->annotationLogic->GetMRMLApplicationLogic();
+  if (mrmlAppLogic)
+    {
+    vtkMRMLInteractionNode *inode = mrmlAppLogic->GetInteractionNode();
+    if (inode)
+      {
+      vtkMRMLSelectionNode *snode = mrmlAppLogic->GetSelectionNode();
+      if (snode)
+	{
+	snode->SetActiveAnnotationID ("vtkMRMLAnnotationFiducialNode");
+	}
+      }
     }
 
   // Place fiducial (non persistent)
@@ -155,6 +181,23 @@ void qSlicerPathPlannerTableWidget
 {
   Q_D(qSlicerPathPlannerTableWidget);
 
+  int selectedRow = d->TableWidget->currentRow();
+  if (selectedRow < 0)
+    {
+    return;
+    }
+
+  // Remove fiducial from scene
+  qSlicerPathPlannerFiducialItem* itemToRemove =
+    dynamic_cast<qSlicerPathPlannerFiducialItem*>(d->TableWidget->item(selectedRow, 0));
+
+  if (itemToRemove)
+    {
+    d->annotationLogic->GetMRMLScene()->RemoveNode(itemToRemove->getFiducialNode());
+    }
+
+  // Remove row from widget
+  d->TableWidget->removeRow(selectedRow);
 }
 
 //-----------------------------------------------------------------------------
@@ -163,6 +206,14 @@ void qSlicerPathPlannerTableWidget
 {
   Q_D(qSlicerPathPlannerTableWidget);
 
+  if (!d->selectedHierarchyNode)
+    {
+    return;
+    }
+
+  d->selectedHierarchyNode->RemoveAllChildrenNodes();
+  d->TableWidget->clearContents();
+  d->TableWidget->setRowCount(0);
 }
 
 

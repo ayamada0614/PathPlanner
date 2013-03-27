@@ -95,22 +95,22 @@ onEntryListNodeChanged(vtkMRMLNode* newList)
     return;
     }
 
-  // Clear entry table widget
-  d->EntryPointWidget->getTableWidget()->clearContents();
-
-  // Populate table with new items in the new list
-  for(int i = 0; i < entryList->GetNumberOfChildrenNodes(); i++)
-    {
-    vtkMRMLAnnotationFiducialNode* fiducialPoint =
-      vtkMRMLAnnotationFiducialNode::SafeDownCast(entryList->GetNthChildNode(i)->GetAssociatedNode());
-    if (fiducialPoint)
-      {
-      this->addNewItem(d->EntryPointWidget->getTableWidget(), fiducialPoint);
-      }
-    }
-
   // Update widget
   d->EntryPointWidget->setSelectedHierarchyNode(entryList);
+
+  // Refresh view
+  this->refreshEntryView();
+
+  // Observe new hierarchy node
+  qvtkConnect(entryList, vtkMRMLAnnotationHierarchyNode::ChildNodeAddedEvent,
+	      this, SLOT(refreshEntryView()));
+  qvtkConnect(entryList, vtkMRMLAnnotationHierarchyNode::ChildNodeRemovedEvent,
+	      this, SLOT(refreshEntryView()));
+
+  // Update groupbox name
+  std::stringstream groupBoxName;
+  groupBoxName << "Entry Point : " << entryList->GetName();
+  d->EntryGroupBox->setTitle(groupBoxName.str().c_str());
 }
 
 //-----------------------------------------------------------------------------
@@ -132,24 +132,22 @@ onTargetListNodeChanged(vtkMRMLNode* newList)
     return;
     }
 
-  // Clear entry table widget
-  d->TargetPointWidget->getTableWidget()->clear();
-  d->TargetPointWidget->getTableWidget()->setRowCount(0);
-  
-
-  // Populate table with new items in the new list
-  for(int i = 0; i < targetList->GetNumberOfChildrenNodes(); i++)
-    {
-    vtkMRMLAnnotationFiducialNode* fiducialPoint =
-      vtkMRMLAnnotationFiducialNode::SafeDownCast(targetList->GetNthChildNode(i)->GetAssociatedNode());
-    if (fiducialPoint)
-      {
-      this->addNewItem(d->TargetPointWidget->getTableWidget(), fiducialPoint);
-      }
-    }
-
   // Update widget
   d->TargetPointWidget->setSelectedHierarchyNode(targetList);
+
+  // Refresh view
+  this->refreshTargetView();
+  
+  // Observe new hierarchy node
+  qvtkConnect(targetList, vtkMRMLAnnotationHierarchyNode::ChildNodeAddedEvent,
+	      this, SLOT(refreshTargetView()));
+  qvtkConnect(targetList, vtkMRMLAnnotationHierarchyNode::ChildNodeRemovedEvent,
+	      this, SLOT(refreshTargetView()));
+
+  // Update groupbox name
+  std::stringstream groupBoxName;
+  groupBoxName << "Target Point : " << targetList->GetName();
+  d->TargetGroupBox->setTitle(groupBoxName.str().c_str());
 }
 
 //-----------------------------------------------------------------------------
@@ -180,6 +178,9 @@ addNewItem(QTableWidget* tableWidget, vtkMRMLAnnotationFiducialNode* fiducialNod
   tableWidget->item(numberOfItems,3)->setFlags(tableWidget->item(numberOfItems,3)->flags() & ~Qt::ItemIsEditable);
   tableWidget->item(numberOfItems,4)->setFlags(tableWidget->item(numberOfItems,4)->flags() & ~Qt::ItemIsEditable);
 
+  // Automatic scroll to last item added
+  tableWidget->scrollToItem(tableWidget->item(numberOfItems,1));
+
   // Update item if changed  
   connect(tableWidget, SIGNAL(itemChanged(QTableWidgetItem*)),
           this, SLOT(onItemChanged(QTableWidgetItem*)));
@@ -203,4 +204,64 @@ onItemChanged(QTableWidgetItem *item)
     }
 
   itemChanged->updateItem();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerPathPlannerModuleWidget::
+refreshEntryView()
+{
+  Q_D(qSlicerPathPlannerModuleWidget);
+
+  vtkMRMLAnnotationHierarchyNode* entryList =
+    d->EntryPointWidget->selectedHierarchyNode();
+  
+  if (!entryList)
+    {
+    return;
+    }
+
+  // Clear entry table widget
+  d->EntryPointWidget->getTableWidget()->clearContents();
+  d->EntryPointWidget->getTableWidget()->setRowCount(0);
+  
+  // Populate table with new items in the new list
+  for(int i = 0; i < entryList->GetNumberOfChildrenNodes(); i++)
+    {
+    vtkMRMLAnnotationFiducialNode* fiducialPoint =
+      vtkMRMLAnnotationFiducialNode::SafeDownCast(entryList->GetNthChildNode(i)->GetAssociatedNode());
+    if (fiducialPoint)
+      {
+      this->addNewItem(d->EntryPointWidget->getTableWidget(), fiducialPoint);
+      }
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerPathPlannerModuleWidget::
+refreshTargetView()
+{
+  Q_D(qSlicerPathPlannerModuleWidget);
+
+  vtkMRMLAnnotationHierarchyNode* targetList =
+    d->TargetPointWidget->selectedHierarchyNode();
+  
+  if (!targetList)
+    {
+    return;
+    }
+
+  // Clear target table widget
+  d->TargetPointWidget->getTableWidget()->clearContents(); 
+  d->TargetPointWidget->getTableWidget()->setRowCount(0);
+ 
+  // Populate table with new items in the new list
+  for(int i = 0; i < targetList->GetNumberOfChildrenNodes(); i++)
+    {
+    vtkMRMLAnnotationFiducialNode* fiducialPoint =
+      vtkMRMLAnnotationFiducialNode::SafeDownCast(targetList->GetNthChildNode(i)->GetAssociatedNode());
+    if (fiducialPoint)
+      {
+      this->addNewItem(d->TargetPointWidget->getTableWidget(), fiducialPoint);
+      }
+    }
 }

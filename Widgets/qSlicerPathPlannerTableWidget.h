@@ -48,6 +48,7 @@ public:
 
   QTableWidget* getTableWidget();
   void setSelectedHierarchyNode(vtkMRMLAnnotationHierarchyNode* selectedNode);
+  vtkMRMLAnnotationHierarchyNode* selectedHierarchyNode();
 
 public slots:
   void onAddButtonClicked();
