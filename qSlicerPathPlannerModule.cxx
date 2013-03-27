@@ -77,7 +77,7 @@ QString qSlicerPathPlannerModule::acknowledgementText()const
 QStringList qSlicerPathPlannerModule::contributors()const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("Atsushi Yamada PhD (Brigham and Women's Hospital and Harvard Medical School)");
+  moduleContributors << QString("Atsushi Yamada PhD (SNR), Laurent Chauvin (SNR)");
   return moduleContributors;
 }
 
@@ -90,13 +90,13 @@ QIcon qSlicerPathPlannerModule::icon()const
 //-----------------------------------------------------------------------------
 QStringList qSlicerPathPlannerModule::categories() const
 {
-  return QStringList() << "Examples";
+  return QStringList() << "IGT";
 }
 
 //-----------------------------------------------------------------------------
 QStringList qSlicerPathPlannerModule::dependencies() const
 {
-  return QStringList();
+  return QStringList() << "Annotations";
 }
 
 //-----------------------------------------------------------------------------

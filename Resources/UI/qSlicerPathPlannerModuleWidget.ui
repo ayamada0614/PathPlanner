@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>525</width>
-    <height>401</height>
+    <width>495</width>
+    <height>441</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>qSlicerPathPlannerModuleWidget</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -21,7 +21,119 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
-       <widget class="qSlicerPathPlannerPanelWidget" name="Panel" native="true"/>
+       <widget class="ctkCollapsibleGroupBox" name="TargetGroupBox">
+        <property name="title">
+         <string>Target Point</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <widget class="qSlicerPathPlannerTableWidget" name="TargetPointWidget" native="true"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="ctkCollapsibleGroupBox" name="EntryGroupBox">
+        <property name="font">
+         <font>
+          <pointsize>13</pointsize>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="title">
+         <string>Entry Point</string>
+        </property>
+        <property name="collapsed">
+         <bool>true</bool>
+        </property>
+        <layout class="QVBoxLayout">
+         <item>
+          <widget class="qSlicerPathPlannerTableWidget" name="EntryPointWidget" native="true"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="ctkCollapsibleGroupBox" name="TrajectoryGroupBox">
+        <property name="title">
+         <string>Trajectory</string>
+        </property>
+        <property name="collapsed">
+         <bool>true</bool>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_4"/>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="ctkCollapsibleButton" name="AdvancedTab">
+     <property name="text">
+      <string>Advanced</string>
+     </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_5">
+      <item>
+       <layout class="QFormLayout" name="formLayout">
+        <property name="formAlignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+        </property>
+        <item row="1" column="0">
+         <widget class="QLabel" name="TargetPointListNodeLabel">
+          <property name="text">
+           <string>Target Point List Node</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="TrajectoryListNode">
+          <property name="text">
+           <string>Trajectory List Node</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="qMRMLNodeComboBox" name="TargetPointListNodeSelector">
+          <property name="nodeTypes">
+           <stringlist>
+            <string>vtkMRMLAnnotationHierarchyNode</string>
+           </stringlist>
+          </property>
+          <property name="baseName">
+           <string>PathPlannerTargetListNode</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="qMRMLNodeComboBox" name="TrajectoryListNodeSelector"/>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="EntryPointListNodeLabel">
+          <property name="text">
+           <string>Entry Point List Node</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="qMRMLNodeComboBox" name="EntryPointListNodeSelector">
+          <property name="nodeTypes">
+           <stringlist>
+            <string>vtkMRMLAnnotationHierarchyNode</string>
+           </stringlist>
+          </property>
+          <property name="renameEnabled">
+           <bool>true</bool>
+          </property>
+          <property name="baseName">
+           <string>PathPlannerEntryListNode</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
@@ -43,6 +155,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>qMRMLNodeComboBox</class>
+   <extends>QWidget</extends>
+   <header>qMRMLNodeComboBox.h</header>
+  </customwidget>
+  <customwidget>
    <class>qSlicerWidget</class>
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
@@ -55,12 +172,102 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qSlicerPathPlannerPanelWidget</class>
-   <extends>QWidget</extends>
-   <header>qslicerpathplannerpanelwidget.h</header>
+   <class>ctkCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>ctkCollapsibleGroupBox.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerPathPlannerTableWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerPathPlannerTableWidget.h</header>
+   <container>1</container>
+   <slots>
+    <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>qSlicerPathPlannerModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>EntryPointWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>111</x>
+     <y>6</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>89</x>
+     <y>82</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerPathPlannerModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>TargetPointWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>236</x>
+     <y>7</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>187</x>
+     <y>136</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerPathPlannerModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>EntryPointListNodeSelector</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>473</x>
+     <y>9</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>298</x>
+     <y>286</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerPathPlannerModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>TargetPointListNodeSelector</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>356</x>
+     <y>391</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>355</x>
+     <y>324</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerPathPlannerModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>TrajectoryListNodeSelector</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>411</x>
+     <y>390</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>402</x>
+     <y>356</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

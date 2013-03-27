@@ -8,23 +8,23 @@ set(${KIT}_INCLUDE_DIRECTORIES
   )
 
 set(${KIT}_SRCS
-  qSlicer${MODULE_NAME}PanelWidget.cxx
-  qSlicer${MODULE_NAME}PanelWidget.h
-  qSlicer${MODULE_NAME}TableModel.h
-  qSlicer${MODULE_NAME}TableModel.cxx
+  qSlicer${MODULE_NAME}TableWidget.cxx
+  qSlicer${MODULE_NAME}TableWidget.h
+  qSlicer${MODULE_NAME}FiducialItem.cxx
+  qSlicer${MODULE_NAME}FiducialItem.h
   )
 
 set(${KIT}_MOC_SRCS
-  qSlicer${MODULE_NAME}PanelWidget.h
-  qSlicer${MODULE_NAME}TableModel.h
+  qSlicer${MODULE_NAME}TableWidget.h
+  qSlicer${MODULE_NAME}FiducialItem.h
   )
 
 set(${KIT}_UI_SRCS
-  ../Resources/UI/qSlicer${MODULE_NAME}PanelWidget.ui
+  ../Resources/UI/qSlicer${MODULE_NAME}TableWidget.ui
   )
 
 set(${KIT}_RESOURCES
-  ../Resources/UI/qSlicer${MODULE_NAME}PanelWidget.ui
+  ../Resources/UI/qSlicer${MODULE_NAME}TableWidget.ui
   )
 
 set(${KIT}_TARGET_LIBRARIES

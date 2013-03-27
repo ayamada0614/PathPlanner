@@ -23,15 +23,20 @@
 
 #include "qSlicerPathPlannerModuleExport.h"
 
+#include <ctkVTKObject.h>
+
+#include <QTableWidget>
 
 class qSlicerPathPlannerModuleWidgetPrivate;
 class vtkMRMLNode;
+class vtkMRMLAnnotationFiducialNode;
 
 /// \ingroup Slicer_QtModules_ExtensionTemplate
 class Q_SLICER_QTMODULES_PATHPLANNER_EXPORT qSlicerPathPlannerModuleWidget :
   public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
+  QVTK_OBJECT
 
 public:
 
@@ -40,12 +45,15 @@ public:
   virtual ~qSlicerPathPlannerModuleWidget();
 
 public slots:
-
+  void onEntryListNodeChanged(vtkMRMLNode* newList);
+  void onTargetListNodeChanged(vtkMRMLNode* newList);
+  void onItemChanged(QTableWidgetItem *item);
 
 protected:
   QScopedPointer<qSlicerPathPlannerModuleWidgetPrivate> d_ptr;
   
   virtual void setup();
+  void addNewItem(QTableWidget* tableWidget, vtkMRMLAnnotationFiducialNode* fiducialNode);
 
 private:
   Q_DECLARE_PRIVATE(qSlicerPathPlannerModuleWidget);
