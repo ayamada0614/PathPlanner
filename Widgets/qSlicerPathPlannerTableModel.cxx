@@ -713,6 +713,11 @@ void qSlicerPathPlannerTableModel
           str.setNum(this->pathDistance[i]);  
           fnode->SetDistanceMeasurement(this->pathDistance[i]);
           item->setText(str);
+          
+          // test code
+          fnode->SetPosition1(this->selectedTargetPoint[i]);
+          fnode->SetPosition2(this->selectedEntryPoint[i]);
+          
         }
         else if(j==3)
         {
@@ -922,6 +927,7 @@ void qSlicerPathPlannerTableModel
               std::cout << "this->pathDistance[i] = "<< this->pathDistance[i] << std::endl;            
               //rnode->SetDistanceMeasurement(value);
               rnode->SetDistanceMeasurement(this->pathDistance[i]);
+              
               break;
             }
               /*
@@ -1235,6 +1241,15 @@ void qSlicerPathPlannerTableModel
 
   double difference[3];
 
+  // set the tip positions
+  this->selectedTargetPoint[row][0] = targetPoint[0];
+  this->selectedTargetPoint[row][1] = targetPoint[1];
+  this->selectedTargetPoint[row][2] = targetPoint[2];
+  
+  this->selectedEntryPoint[row][0] = entryPoint[0];
+  this->selectedEntryPoint[row][1] = entryPoint[1];
+  this->selectedEntryPoint[row][2] = entryPoint[2];
+    
   // test code
   std::cout << "pathDistance row = " << row << std::endl;
   
