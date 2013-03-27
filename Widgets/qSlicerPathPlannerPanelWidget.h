@@ -72,8 +72,12 @@ public:
   int selectedPathIndexOfRow;
   int selectedPathIndexofColumn;
   double differenceOfTip[3];
-  double selectedEntryPoint[20][3];
-  double selectedTargetPoint[20][3];
+  double selectedEntryPoint[100][3];
+  double selectedTargetPoint[100][3];
+  int targetRow[100];
+  int targetColumn[100];
+  int entryRow[100];
+  int entryColumn[100];
   
 
 public slots:

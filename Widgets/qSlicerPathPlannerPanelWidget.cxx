@@ -436,6 +436,10 @@ qSlicerPathPlannerPanelWidget
     //                 this,SLOT(onTabSwitched(int)));
   }
   */
+  
+  // initialization for toggleSwitch
+  this->switchCurrentAnotationNode(2);
+  
 }
 
 //-----------------------------------------------------------------------------
@@ -796,6 +800,10 @@ void qSlicerPathPlannerPanelWidget
     d->AnnotationsLogic->SetActiveHierarchyNodeID(hnode->GetID());
   }
   
+  //
+  //d->PathsTableModel->pathTableExistance = 1;
+  //d->TargetPointsTableModel->pathTableExistance = 1;
+  //d->EntryPointsTableModel->pathTableExistance = 1;
   
   // test 
   //d->PathsTableModel->addPoint(1.5,1.5,1.5);
@@ -875,6 +883,10 @@ void qSlicerPathPlannerPanelWidget
       d->TargetPointsTableModel->identifyTipOfPath(index.row(), index.column());
       std::cout << "selected target name = " << d->TargetPointsTableModel->selectedName << std::endl;            
       
+      // test code for renewing path
+      this->targetRow[this->selectedPathIndexOfRow] = index.row();
+      this->targetColumn[this->selectedPathIndexOfRow] = index.column();
+      
       // update target point name
       d->PathsTableModel->targetPointName[this->selectedPathIndexOfRow] = d->TargetPointsTableModel->selectedName; 
       
@@ -935,7 +947,12 @@ void qSlicerPathPlannerPanelWidget
       
       // identify the selected item name
       d->EntryPointsTableModel->identifyTipOfPath(index.row(), index.column());
-      std::cout << "selected entry name = " << d->EntryPointsTableModel->selectedName << std::endl;      
+      std::cout << "selected entry name = " << d->EntryPointsTableModel->selectedName << std::endl;  
+      
+      // test code for renewing path
+      this->entryRow[this->selectedPathIndexOfRow] = index.row();
+      this->entryColumn[this->selectedPathIndexOfRow] = index.column();
+      
       d->PathsTableModel->entryPointName[this->selectedPathIndexOfRow] = d->EntryPointsTableModel->selectedName; 
 
       // update entry point coordinate;
@@ -985,6 +1002,12 @@ void qSlicerPathPlannerPanelWidget
   d->PathsTableModel->selectedTargetPointItemColumn = RESET;
   d->PathsTableModel->selectedEntryPointItemRow = RESET;
   d->PathsTableModel->selectedEntryPointItemColumn = RESET;
+
+  // calculate distance
+  //d->TargetPointsTableModel->identifyTipOfPath(this->targetRow[this->selectedPathIndexOfRow], this->targetColumn[this->selectedPathIndexOfRow]);
+  //d->EntryPointsTableModel->identifyTipOfPath(this->entryRow[this->selectedPathIndexOfRow], this->entryColumn[this->selectedPathIndexOfRow]);
+  // calculate distance
+  //d->PathsTableModel->calculatePath(d->EntryPointsTableModel->selectedCoordinate[this->entryRow[this->selectedPathIndexOfRow]], d->TargetPointsTableModel->selectedCoordinate[this->targetRow[this->selectedPathIndexOfRow]],this->selectedPathIndexOfRow);
 
   
 }

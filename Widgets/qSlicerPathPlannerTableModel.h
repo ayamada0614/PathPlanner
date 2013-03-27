@@ -100,6 +100,7 @@ public:
   double pathDistance[100];
   int** columItemFlag;
   int pathColumnCounter;
+  int pathTableExistance;
   //double pathDistance;
   
 public slots:

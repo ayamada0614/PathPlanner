@@ -469,6 +469,14 @@ void qSlicerPathPlannerTableModel
       }
     }
 
+  // test code
+  /*
+  if(this->pathTableExistance == 1)
+  {
+    this->updateRulerTable();
+    std::cout << "updateRulerTable in updateTable()" << std::endl;
+  }   
+  */
   d->PendingItemModified = -1;
 
 }
@@ -715,6 +723,7 @@ void qSlicerPathPlannerTableModel
           item->setText(str);
           
           // test code
+          this->calculatePath(this->selectedEntryPoint[i], this->selectedTargetPoint[i], i);
           fnode->SetPosition1(this->selectedTargetPoint[i]);
           fnode->SetPosition2(this->selectedEntryPoint[i]);
           
@@ -839,15 +848,16 @@ void qSlicerPathPlannerTableModel
     
     }
 
-  /*
+  
   // test code
   if(this->selectedPathsTableRow != RESET)
   {
     this->updateRulerTable();
+    std::cout << "updateRulerTable in onItemChanged()" << std::endl;
   } 
-  */
+  
   // test
-  //std::cout << "finish onItemChanged()" << std::endl;
+  std::cout << "finish onItemChanged()" << std::endl;
   
 }
 
@@ -1082,6 +1092,7 @@ void qSlicerPathPlannerTableModel
   
   // test
   std::cout << "onMRMLChildNodeValueModified" << std::endl;
+  std::cout << "this->selectedPathsTableRow = " << this->selectedPathsTableRow << std::endl;
   //std::cout << "it's enough to add only UpdateTable function here" << std::endl;
   
   //this->addPoint(1,1,1);
