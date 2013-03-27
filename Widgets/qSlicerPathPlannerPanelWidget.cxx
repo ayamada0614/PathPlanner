@@ -187,7 +187,7 @@ qSlicerPathPlannerPanelWidget
   
   this->generatedPathColumnCounter = 0;
   
-  /*
+/*  
   // test codes
   // ------------------------------
   QModelIndex topLeft;
@@ -199,7 +199,7 @@ qSlicerPathPlannerPanelWidget
   QItemSelection selection(topLeft, bottomRight);
   this->selectionTargetPointsTableModel->select(selection, QItemSelectionModel::Select);
   // ------------------------------
-  */
+*/  
  
   if (d->EntryPointsAnnotationNodeSelector)
   {
@@ -919,6 +919,24 @@ void qSlicerPathPlannerPanelWidget
     }
   }
   
+   /*
+   // reset focus
+   this->selectionTargetPointsTableModel
+   ->select(selected, QItemSelectionModel::Deselect | QItemSelectionModel::Columns);
+   
+   // reset entry point
+   QModelIndex topLeft;
+   QModelIndex bottomRight;
+   
+   topLeft = d->EntryPointsTableModel->index(0,0,QModelIndex());
+   bottomRight = d->EntryPointsTableModel->index(0,5,QModelIndex());
+   
+   QItemSelection selection(topLeft, bottomRight);
+   this->selectionEntryPointsTableModel->select(selection, QItemSelectionModel::Deselect | QItemSelectionModel::Columns);
+   */
+  
+  
+  
 }
 
 
@@ -1009,6 +1027,22 @@ void qSlicerPathPlannerPanelWidget
   // calculate distance
   //d->PathsTableModel->calculatePath(d->EntryPointsTableModel->selectedCoordinate[this->entryRow[this->selectedPathIndexOfRow]], d->TargetPointsTableModel->selectedCoordinate[this->targetRow[this->selectedPathIndexOfRow]],this->selectedPathIndexOfRow);
 
+
+  // reset entry point
+  QModelIndex topLeft;
+  QModelIndex bottomRight;
+  
+  topLeft = d->EntryPointsTableModel->index(0,0,QModelIndex());
+  bottomRight = d->EntryPointsTableModel->index(0,5,QModelIndex());
+  
+  QItemSelection entrySelectionReset(topLeft, bottomRight);
+  this->selectionEntryPointsTableModel->select(entrySelectionReset, QItemSelectionModel::Deselect | QItemSelectionModel::Columns);
+  
+  topLeft = d->TargetPointsTableModel->index(0,0,QModelIndex());
+  bottomRight = d->TargetPointsTableModel->index(0,5,QModelIndex());
+  
+  QItemSelection targetSelectionReset(topLeft, bottomRight);
+  this->selectionTargetPointsTableModel->select(targetSelectionReset, QItemSelectionModel::Deselect | QItemSelectionModel::Columns);
   
 }
 
