@@ -83,7 +83,7 @@ public:
   void addRuler(void);
   void initList(int);
   const char* targetPointName[100];
-  const char** entryPointName;
+  const char* entryPointName[100];
   int** columItemFlag;
   int pathColumnCounter;
   

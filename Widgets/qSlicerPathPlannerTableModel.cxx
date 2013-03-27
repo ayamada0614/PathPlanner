@@ -532,6 +532,7 @@ void qSlicerPathPlannerTableModel
     // test code
     std::cout << "this->pathColumnCounter = " << this->pathColumnCounter << std::endl;
     this->targetPointName[this->pathColumnCounter] = "Set Target Point";
+    this->entryPointName[this->pathColumnCounter] = "Set Entry Point";
     this->pathColumnCounter++;
     
     //string.append(test[0]);    
@@ -740,6 +741,7 @@ void qSlicerPathPlannerTableModel
         }
         else if(j==1)
         {
+          /*
           if(this->selectedPathsTableRow == i && this->selectedEntryPointItemRow != RESET)
           {
             //item->setText(this->entryPointName);
@@ -747,6 +749,13 @@ void qSlicerPathPlannerTableModel
           }else{
             item->setText("Set Entry Point");                    
           }
+          */
+          
+          // test code
+          QString string;
+          string.append(this->entryPointName[i]);
+          item->setText(string);
+          
         }
         else if(j==2) 
         { // get distance

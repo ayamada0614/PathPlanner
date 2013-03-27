@@ -869,8 +869,8 @@ void qSlicerPathPlannerPanelWidget
       //std::cout << "i = index.row() = " << i << std::endl;  
 
       // test code: update the target point name
-      d->PathsTableModel->targetPointName[this->selectedIndexOfRow] = "Picked up!!";
-      std::cout << "Picked up!!" << std::endl;
+      d->PathsTableModel->targetPointName[this->selectedIndexOfRow] = "Picked up target!!";
+      std::cout << "Picked up target!!" << std::endl;
 
       
       d->PathsTableModel->selectedTargetPointItemRow = index.row();
@@ -928,6 +928,10 @@ void qSlicerPathPlannerPanelWidget
     {
       //std::cout << "selected EntryPoint items = (" << index.row() << "," << index.column() << ")" << std::endl;
     
+      // test code: update the entry point name
+      d->PathsTableModel->entryPointName[this->selectedIndexOfRow] = "Picked up entry!!";
+      std::cout << "Picked up entry!!" << std::endl;      
+      
       d->PathsTableModel->selectedEntryPointItemRow = index.row();
       d->PathsTableModel->selectedEntryPointItemColumn = index.column();
       //d->PathsTableModel->updateTable();
