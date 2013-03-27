@@ -167,6 +167,7 @@ qSlicerPathPlannerTableModel
   this->selectedEntryPointItemColumn = RESET;
   this->selectedPathsTableRow = RESET;
   this->selectedPathsTableColumn = RESET;
+  this->pathColumnCounter = 0;
 }
 
 qSlicerPathPlannerTableModel
@@ -515,6 +516,28 @@ void qSlicerPathPlannerTableModel
   
   if (d->Scene && d->HierarchyNode)
   {
+    
+    // test code
+    //d->PathsTableModel->targetPointName[d->PathsTableModel->pathColumnCounter] = (char*)malloc(sizeof(char) * 50);
+    //this->targetPointName[this->pathColumnCounter] = (const char*)malloc(sizeof(const char) * 50);
+    //this->targetPointName[0] = (const char*)malloc(sizeof(const char) * 50);
+    //this->targetPointName[0] = "Set Target Point";
+    //this->targetPointName[this->pathColumnCounter] = "Set Target Point";
+    //this->pathColumnCounter++;
+    
+    //QString string;
+    //const char* test[10];
+    //test[0] = "sample";
+    
+    // test code
+    std::cout << "this->pathColumnCounter = " << this->pathColumnCounter << std::endl;
+    this->targetPointName[this->pathColumnCounter] = "Set Target Point";
+    this->pathColumnCounter++;
+    
+    //string.append(test[0]);    
+    //item->setText(string);
+    
+    
     // Generate fiducial point name
     vtkNew<vtkCollection> collection;
     d->HierarchyNode->GetDirectChildren(collection.GetPointer());
@@ -691,21 +714,29 @@ void qSlicerPathPlannerTableModel
           {
             //item->setText(this->targetPointName);
             //item->setText("Set!!");
-
+          
+            // test code
+            // read and set the target name
+            
+          
+          
+          }
+          
+          
             QString string;
             //string.setNum(100);// = this->targetPointName[i];
-            const char* test[10];
-            test[0] = "sample";
-            //string.append(this->targetPointName[i]);
-            string.append(test[0]);
+            //const char* test[10];
+            //test[0] = "sample";
+            string.append(this->targetPointName[i]);
+            ///string.append(test[0]);
             
             //this->targetPointName[i] = "text code";
             //item->setText(this->targetPointName[i]);
             item->setText(string);
-          }else{
-            item->setText("Set Target Point");            
+          ///}else{
+          ///  item->setText("Set Target Point");            
             //item->setText(this->targetPointName[i]);            
-          }
+          ///}
         }
         else if(j==1)
         {

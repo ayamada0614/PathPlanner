@@ -181,6 +181,10 @@ qSlicerPathPlannerPanelWidget
   this->selectionTargetPointsTableModel = d->TargetPointsTable->selectionModel();
   this->selectionPathsTableModel = d->PathsTable->selectionModel();
   
+  // test code
+  this->selectedIndexOfRow = 0;
+  this->selectedIndexofColumn = 0;
+  
   /*
   // test codes
   // ------------------------------
@@ -678,7 +682,9 @@ void qSlicerPathPlannerPanelWidget
       //                                      matrix->Element[1][3],
       //                                      matrix->Element[2][3]);
       //d->PathsTableModel->addPoint(1.0,2.0,3.0);
-      d->PathsTableModel->addRuler();
+      
+      // test code 3/27/2013
+      //d->PathsTableModel->addRuler();
       
       // Switch the active hierarchy node to the original
       d->AnnotationsLogic->SetActiveHierarchyNodeID(original.c_str());
@@ -761,6 +767,13 @@ void qSlicerPathPlannerPanelWidget
 
   std::cout << "clicked addPathRowButton" << std::endl;
   
+  //d->PathsTableModel->targetPointName[d->PathsTableModel->pathColumnCounter] = (char*)malloc(sizeof(char) * 50);
+  //d->PathsTableModel->targetPointName[d->PathsTableModel->pathColumnCounter] = "Set Target Point";
+  //d->PathsTableModel->pathColumnCounter++;
+
+  
+  //this->pathColumnCounter++;
+
   //d->qSlicerPathPlannerTableModel->updateTable();
   //d->PathsTableModel->onMRMLChildNodeAdded();
   
@@ -777,8 +790,11 @@ void qSlicerPathPlannerPanelWidget
   // test 
   //d->PathsTableModel->addPoint(1.5,1.5,1.5);
   //d->PathsTableModel->updateTable();
+
+  // test code 3/27/2013
+  //this->addTargetPoint();
+  d->PathsTableModel->addRuler();
   
-  this->addTargetPoint();
   //d->PathsTableModel->updateTable();
   
 }
@@ -851,7 +867,12 @@ void qSlicerPathPlannerPanelWidget
     
       //i = index.row();
       //std::cout << "i = index.row() = " << i << std::endl;  
-    
+
+      // test code: update the target point name
+      d->PathsTableModel->targetPointName[this->selectedIndexOfRow] = "Picked up!!";
+      std::cout << "Picked up!!" << std::endl;
+
+      
       d->PathsTableModel->selectedTargetPointItemRow = index.row();
       d->PathsTableModel->selectedTargetPointItemColumn = index.column();
       //d->PathsTableModel->updateTable();
@@ -939,6 +960,11 @@ void qSlicerPathPlannerPanelWidget
     d->PathsTableModel->selectedPathsTableColumn = index.column();
     // if you execute the under line, the path table will be disappeared.
     //d->PathsTableModel->updateTable();
+    
+    // test code: selected path table
+    this->selectedIndexOfRow = index.row();
+    this->selectedIndexofColumn = index.column();
+    
   }
   
   d->PathsTableModel->selectedTargetPointItemRow = RESET;

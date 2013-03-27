@@ -63,8 +63,14 @@ public:
   QItemSelectionModel *selectionTargetPointsTableModel;
   QItemSelectionModel *selectionPathsTableModel;
   
+  //int pathColumnCounter;
+  
   // test code
   //QVariant data(const QModelIndex &index, int role) const;
+  
+  // test code
+  int selectedIndexOfRow;
+  int selectedIndexofColumn;
   
 
 public slots:
