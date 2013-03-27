@@ -686,6 +686,7 @@ void qSlicerPathPlannerTableModel
       // test code
       //item->getText(fnode->GetName());
       //std::cout << "fnode->GetName() = " << fnode->GetName() << std::endl;  
+      //printf("fnode->GetName() = %s", fnode->GetName());  
 
       
       for (int j = 0; j < 5; j ++)
@@ -1139,4 +1140,95 @@ void qSlicerPathPlannerTableModel
   }
   
 }
+
+
+//------------------------------------------------------------------------------
+void qSlicerPathPlannerTableModel
+::identifyName(int row, int column)
+{
+  Q_D(qSlicerPathPlannerTableModel);
+  
+  //const char* selectedName;
+  
+  // test code
+  std::cout << "identifyName" << std::endl;  
+  
+  if (d->HierarchyNode == 0)
+  {
+    this->setRowCount(0);
+    
+    return;
+  }
+  
+  d->PendingItemModified = 0;
+  
+  // Count the number of child Fiducial nodes 
+  vtkNew<vtkCollection> collection;
+  d->HierarchyNode->GetDirectChildren(collection.GetPointer());
+  int nItems = collection->GetNumberOfItems();
+  int nFiducials = 0;
+  
+  // flag if time and memo should be refreshed in column 5 and 6
+  if (nItems > this->nItemsPrevious)
+  {
+    this->addRowFlag = 1;
+    this->nItemsPrevious = nItems;
+  }
+  else
+  {
+    this->addRowFlag = 0;    
+    this->nItemsPrevious = nItems;
+  }
+  
+  collection->InitTraversal();
+  
+  /*
+  for (int i = 0; i < nItems; i ++)
+  {
+    vtkMRMLAnnotationFiducialNode* fnode;
+    fnode = vtkMRMLAnnotationFiducialNode::SafeDownCast(collection->GetNextItemAsObject());
+    if (fnode)
+    {
+      nFiducials ++;
+    }
+  }
+  this->setRowCount(nFiducials);
+  */
+  
+  collection->InitTraversal();
+  for (int i = 0; i < nItems; i ++)
+  {
+    vtkMRMLAnnotationFiducialNode* fnode;
+    fnode = vtkMRMLAnnotationFiducialNode::SafeDownCast(collection->GetNextItemAsObject());
+    if (fnode)
+    {
+      QStandardItem* item = this->invisibleRootItem()->child(i, 0);
+      if (item == NULL)
+      {
+        item = new QStandardItem();
+        this->invisibleRootItem()->setChild(i, 0, item);
+      }
+      
+      // identify the name
+      //item->setText(fnode->GetName());
+      //item->setData(fnode->GetID(),qSlicerPathPlannerTableModel::NodeIDRole);
+      
+      if(i == row)
+      {
+        this->selectedName = fnode->GetName(); 
+        //this->selectedName = fnode->GetName(); 
+        //this->entryPointName[i] = fnode->GetName(); 
+        std::cout << "selectedName = " << this->selectedName << std::endl;  
+      }else
+      {
+        item->setText(fnode->GetName());        
+        std::cout << "item->setText(fnode->GetName()) = " << fnode->GetName() << std::endl;  
+      }
+
+
+    }
+  }
+  
+}
+
 

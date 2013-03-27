@@ -182,8 +182,8 @@ qSlicerPathPlannerPanelWidget
   this->selectionPathsTableModel = d->PathsTable->selectionModel();
   
   // test code
-  this->selectedIndexOfRow = 0;
-  this->selectedIndexofColumn = 0;
+  this->selectedPathIndexOfRow = 0;
+  this->selectedPathIndexofColumn = 0;
   
   /*
   // test codes
@@ -869,7 +869,7 @@ void qSlicerPathPlannerPanelWidget
       //std::cout << "i = index.row() = " << i << std::endl;  
 
       // test code: update the target point name
-      d->PathsTableModel->targetPointName[this->selectedIndexOfRow] = "Picked up target!!";
+      d->PathsTableModel->targetPointName[this->selectedPathIndexOfRow] = "Picked up target!!";
       std::cout << "Picked up target!!" << std::endl;
 
       
@@ -929,11 +929,22 @@ void qSlicerPathPlannerPanelWidget
       //std::cout << "selected EntryPoint items = (" << index.row() << "," << index.column() << ")" << std::endl;
     
       // test code: update the entry point name
-      d->PathsTableModel->entryPointName[this->selectedIndexOfRow] = "Picked up entry!!";
+      //d->PathsTableModel->entryPointName[this->selectedIndexOfRow] = "Picked up entry!!";
       std::cout << "Picked up entry!!" << std::endl;      
       
       d->PathsTableModel->selectedEntryPointItemRow = index.row();
       d->PathsTableModel->selectedEntryPointItemColumn = index.column();
+      std::cout << "index.row() = " << index.row() << std::endl;      
+      std::cout << "index.column() = " << index.column() << std::endl;      
+      
+      //d->PathsTableModel->entryPointName[this->selectedIndexOfRow] = d->PathsTableModel->identifyName(index.row(), index.column()); 
+      // identify the selected item name
+      //const char* selectedEntryName;
+      d->EntryPointsTableModel->identifyName(index.row(), index.column());
+      std::cout << "selected entry name = " << d->EntryPointsTableModel->selectedName << std::endl;      
+      
+      d->PathsTableModel->entryPointName[this->selectedPathIndexOfRow] = d->EntryPointsTableModel->selectedName; 
+      
       //d->PathsTableModel->updateTable();
       d->PathsTableModel->updateRulerTable();
       
@@ -966,8 +977,9 @@ void qSlicerPathPlannerPanelWidget
     //d->PathsTableModel->updateTable();
     
     // test code: selected path table
-    this->selectedIndexOfRow = index.row();
-    this->selectedIndexofColumn = index.column();
+    this->selectedPathIndexOfRow = index.row();
+    this->selectedPathIndexofColumn = index.column();
+    
     
   }
   

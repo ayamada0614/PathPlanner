@@ -69,8 +69,8 @@ public:
   //QVariant data(const QModelIndex &index, int role) const;
   
   // test code
-  int selectedIndexOfRow;
-  int selectedIndexofColumn;
+  int selectedPathIndexOfRow;
+  int selectedPathIndexofColumn;
   
 
 public slots:

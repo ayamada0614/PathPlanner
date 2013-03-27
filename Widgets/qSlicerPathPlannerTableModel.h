@@ -79,6 +79,13 @@ public:
   void setCoordinateLabel(int m); // LABEL_RAS or LABEL_XYZ
   void updateTable();
   void updateRulerTable();
+  
+  // test code
+  void identifyName(int row, int column);
+  const char* selectedName;
+  //char selectedTargetName;
+  //char selectedEntryName;
+  
   void addPoint(double x, double y, double z);
   void addRuler(void);
   void initList(int);
