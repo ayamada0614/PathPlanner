@@ -602,6 +602,8 @@ void qSlicerPathPlannerTableModel
   if (d->HierarchyNode == 0)
   {
     this->setRowCount(0);
+    // test code
+    std::cout << "d->HierarchyNode == 0" << std::endl;
     
     return;
   }
@@ -706,6 +708,8 @@ void qSlicerPathPlannerTableModel
         else if(j==2) 
         { // get distance
           //str.setNum(fnode->GetDistanceMeasurement());          
+          // test code
+          std::cout << "SetDistanceMeasurement = " << this->pathDistance[i] << std::endl;
           str.setNum(this->pathDistance[i]);  
           fnode->SetDistanceMeasurement(this->pathDistance[i]);
           item->setText(str);
@@ -1230,6 +1234,9 @@ void qSlicerPathPlannerTableModel
   Q_D(qSlicerPathPlannerTableModel);
 
   double difference[3];
+
+  // test code
+  std::cout << "pathDistance row = " << row << std::endl;
   
   // calculate distance
   difference[0] = entryPoint[0] - targetPoint[0];
