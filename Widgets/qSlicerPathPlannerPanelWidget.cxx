@@ -863,18 +863,25 @@ void qSlicerPathPlannerPanelWidget
     {
       //QString text = QString("(%1, %2)").arg(index.row()).arg(index.column());
       //d->TargetPointsTableModel->setData(index,text);
-      std::cout << "selected TargetPoint items = (" << index.row() << "," << index.column() << ")" << std::endl;  
+      //std::cout << "selected TargetPoint items = (" << index.row() << "," << index.column() << ")" << std::endl;  
     
       //i = index.row();
       //std::cout << "i = index.row() = " << i << std::endl;  
 
       // test code: update the target point name
-      d->PathsTableModel->targetPointName[this->selectedPathIndexOfRow] = "Picked up target!!";
+      //d->PathsTableModel->targetPointName[this->selectedPathIndexOfRow] = "Picked up target!!";
       std::cout << "Picked up target!!" << std::endl;
 
-      
       d->PathsTableModel->selectedTargetPointItemRow = index.row();
       d->PathsTableModel->selectedTargetPointItemColumn = index.column();
+      std::cout << "index.row() for target point = " << index.row() << std::endl;      
+      std::cout << "index.column() for target point = " << index.column() << std::endl;      
+      
+      
+      d->TargetPointsTableModel->identifyName(index.row(), index.column());
+      std::cout << "selected target name = " << d->TargetPointsTableModel->selectedName << std::endl;            
+      d->PathsTableModel->targetPointName[this->selectedPathIndexOfRow] = d->TargetPointsTableModel->selectedName; 
+      
       //d->PathsTableModel->updateTable();
       d->PathsTableModel->updateRulerTable();
     
@@ -934,15 +941,14 @@ void qSlicerPathPlannerPanelWidget
       
       d->PathsTableModel->selectedEntryPointItemRow = index.row();
       d->PathsTableModel->selectedEntryPointItemColumn = index.column();
-      std::cout << "index.row() = " << index.row() << std::endl;      
-      std::cout << "index.column() = " << index.column() << std::endl;      
+      std::cout << "index.row() for entry point = " << index.row() << std::endl;      
+      std::cout << "index.column() for entry point = " << index.column() << std::endl;      
       
       //d->PathsTableModel->entryPointName[this->selectedIndexOfRow] = d->PathsTableModel->identifyName(index.row(), index.column()); 
       // identify the selected item name
       //const char* selectedEntryName;
       d->EntryPointsTableModel->identifyName(index.row(), index.column());
       std::cout << "selected entry name = " << d->EntryPointsTableModel->selectedName << std::endl;      
-      
       d->PathsTableModel->entryPointName[this->selectedPathIndexOfRow] = d->EntryPointsTableModel->selectedName; 
       
       //d->PathsTableModel->updateTable();

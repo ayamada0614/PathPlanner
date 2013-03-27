@@ -712,29 +712,27 @@ void qSlicerPathPlannerTableModel
           //str.setNum(fnode->GetFiducialCoordinates()[j]);
           //str="Set Target";
           //std::cout << "this->selectedPathsTableColumn = " << this->selectedPathsTableColumn << "," << i << std::endl;            
-          if(this->selectedPathsTableRow == i && this->selectedTargetPointItemRow != RESET)
-          {
+          //if(this->selectedPathsTableRow == i && this->selectedTargetPointItemRow != RESET)
+          //{
             //item->setText(this->targetPointName);
             //item->setText("Set!!");
           
             // test code
             // read and set the target name
             
-          
-          
-          }
+          //}
           
           
             QString string;
+            string.append(this->targetPointName[i]);
+            item->setText(string);
             //string.setNum(100);// = this->targetPointName[i];
             //const char* test[10];
             //test[0] = "sample";
-            string.append(this->targetPointName[i]);
             ///string.append(test[0]);
             
             //this->targetPointName[i] = "text code";
             //item->setText(this->targetPointName[i]);
-            item->setText(string);
           ///}else{
           ///  item->setText("Set Target Point");            
             //item->setText(this->targetPointName[i]);            
