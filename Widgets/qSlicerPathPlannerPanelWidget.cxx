@@ -185,6 +185,8 @@ qSlicerPathPlannerPanelWidget
   this->selectedPathIndexOfRow = 0;
   this->selectedPathIndexofColumn = 0;
   
+  this->generatedPathColumnCounter = 0;
+  
   /*
   // test codes
   // ------------------------------
@@ -771,8 +773,16 @@ void qSlicerPathPlannerPanelWidget
   //d->PathsTableModel->targetPointName[d->PathsTableModel->pathColumnCounter] = "Set Target Point";
   //d->PathsTableModel->pathColumnCounter++;
 
+  // initialize variables
+  for(int i = 0; i < 4; i++)
+  {
+    //d->EntryPointsTableModel->selectedEntryPoint[this->generatedPathColumnCounter][i] = 0.0;
+    //d->TargetPointsTableModel->selectedTargetPoint[this->generatedPathColumnCounter][i] = 0.0;
+    this->selectedEntryPoint[this->generatedPathColumnCounter][i] = 0.0;
+    this->selectedTargetPoint[this->generatedPathColumnCounter][i] = 0.0;
+  }
   
-  //this->pathColumnCounter++;
+  this->generatedPathColumnCounter++;
 
   //d->qSlicerPathPlannerTableModel->updateTable();
   //d->PathsTableModel->onMRMLChildNodeAdded();
@@ -848,7 +858,7 @@ void qSlicerPathPlannerPanelWidget
   
   QStringList stringList;
   QString string;
-  
+    
   // selected row and column identification
   if(d->PathsTableModel->selectedPathsTableColumn != RESET)
   {
@@ -862,9 +872,34 @@ void qSlicerPathPlannerPanelWidget
       std::cout << "index.row() for target point = " << index.row() << std::endl;      
       std::cout << "index.column() for target point = " << index.column() << std::endl;      
             
-      d->TargetPointsTableModel->identifyName(index.row(), index.column());
+      d->TargetPointsTableModel->identifyTipOfPath(index.row(), index.column());
       std::cout << "selected target name = " << d->TargetPointsTableModel->selectedName << std::endl;            
+      
+      // update target point name
       d->PathsTableModel->targetPointName[this->selectedPathIndexOfRow] = d->TargetPointsTableModel->selectedName; 
+      
+      // update target point coordinate;
+      //d->TargetPointsTableModel->selectedTargetPoint[this->selectedPathIndexOfRow][0] = d->TargetPointsTableModel->selectedCoordinate[index.row()][0];
+      //d->TargetPointsTableModel->selectedTargetPoint[this->selectedPathIndexOfRow][1] = d->TargetPointsTableModel->selectedCoordinate[index.row()][1];
+      //d->TargetPointsTableModel->selectedTargetPoint[this->selectedPathIndexOfRow][2] = d->TargetPointsTableModel->selectedCoordinate[index.row()][2];
+      this->selectedTargetPoint[this->selectedPathIndexOfRow][0] = d->TargetPointsTableModel->selectedCoordinate[index.row()][0];
+      this->selectedTargetPoint[this->selectedPathIndexOfRow][1] = d->TargetPointsTableModel->selectedCoordinate[index.row()][1];
+      this->selectedTargetPoint[this->selectedPathIndexOfRow][2] = d->TargetPointsTableModel->selectedCoordinate[index.row()][2];
+      
+      // calculate distance
+      d->PathsTableModel->calculatePath(this->selectedEntryPoint[this->selectedPathIndexOfRow], this->selectedTargetPoint[this->selectedPathIndexOfRow],this->selectedPathIndexOfRow);
+
+      /*
+      // update distance
+      double difference[3];
+      difference[0] = this->selectedTargetPoint[this->selectedPathIndexOfRow][0] - this->selectedEntryPoint[this->selectedPathIndexOfRow][0];
+      difference[0] = this->selectedTargetPoint[this->selectedPathIndexOfRow][1] - this->selectedEntryPoint[this->selectedPathIndexOfRow][1];
+      difference[0] = this->selectedTargetPoint[this->selectedPathIndexOfRow][2] - this->selectedEntryPoint[this->selectedPathIndexOfRow][2];
+      
+      fid->SetDistanceMeasurement(sqrt(difference[0]*difference[0]+difference[1]*difference[1]+difference[2]*difference[2]));
+      */
+      
+      
       
       //d->PathsTableModel->updateTable();
       d->PathsTableModel->updateRulerTable();
@@ -899,9 +934,20 @@ void qSlicerPathPlannerPanelWidget
       std::cout << "index.column() for entry point = " << index.column() << std::endl;      
       
       // identify the selected item name
-      d->EntryPointsTableModel->identifyName(index.row(), index.column());
+      d->EntryPointsTableModel->identifyTipOfPath(index.row(), index.column());
       std::cout << "selected entry name = " << d->EntryPointsTableModel->selectedName << std::endl;      
       d->PathsTableModel->entryPointName[this->selectedPathIndexOfRow] = d->EntryPointsTableModel->selectedName; 
+
+      // update entry point coordinate;
+      //d->EntryPointsTableModel->selectedEntryPoint[this->selectedPathIndexOfRow][0] = d->EntryPointsTableModel->selectedCoordinate[index.row()][0];
+      //d->EntryPointsTableModel->selectedEntryPoint[this->selectedPathIndexOfRow][1] = d->EntryPointsTableModel->selectedCoordinate[index.row()][1];
+      //d->EntryPointsTableModel->selectedEntryPoint[this->selectedPathIndexOfRow][2] = d->EntryPointsTableModel->selectedCoordinate[index.row()][2];
+      this->selectedEntryPoint[this->selectedPathIndexOfRow][0] = d->EntryPointsTableModel->selectedCoordinate[index.row()][0];
+      this->selectedEntryPoint[this->selectedPathIndexOfRow][1] = d->EntryPointsTableModel->selectedCoordinate[index.row()][1];
+      this->selectedEntryPoint[this->selectedPathIndexOfRow][2] = d->EntryPointsTableModel->selectedCoordinate[index.row()][2];
+      
+      // calculate distance
+      d->PathsTableModel->calculatePath(this->selectedEntryPoint[this->selectedPathIndexOfRow], this->selectedTargetPoint[this->selectedPathIndexOfRow],this->selectedPathIndexOfRow);
       
       //d->PathsTableModel->updateTable();
       d->PathsTableModel->updateRulerTable();

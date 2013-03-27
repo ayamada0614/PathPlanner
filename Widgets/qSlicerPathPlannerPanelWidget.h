@@ -63,7 +63,7 @@ public:
   QItemSelectionModel *selectionTargetPointsTableModel;
   QItemSelectionModel *selectionPathsTableModel;
   
-  //int pathColumnCounter;
+  int generatedPathColumnCounter;
   
   // test code
   //QVariant data(const QModelIndex &index, int role) const;
@@ -71,6 +71,9 @@ public:
   // test code
   int selectedPathIndexOfRow;
   int selectedPathIndexofColumn;
+  double differenceOfTip[3];
+  double selectedEntryPoint[100][3];
+  double selectedTargetPoint[100][3];
   
 
 public slots:

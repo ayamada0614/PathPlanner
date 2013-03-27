@@ -81,8 +81,14 @@ public:
   void updateRulerTable();
   
   // test code
-  void identifyName(int row, int column);
+  void identifyTipOfPath(int row, int column);
+  void calculatePath(double entryPoint[3], double targetPoint[3], int row);
   const char* selectedName;
+  double selectedCoordinate[100][3];
+  double selectedTargetPoint[100][3];
+  double selectedEntryPoint[100][3];
+  
+  const char* selectedTime;
   //char selectedTargetName;
   //char selectedEntryName;
   
@@ -91,8 +97,10 @@ public:
   void initList(int);
   const char* targetPointName[100];
   const char* entryPointName[100];
+  double pathDistance[100];
   int** columItemFlag;
   int pathColumnCounter;
+  //double pathDistance;
   
 public slots:
   void setMRMLScene(vtkMRMLScene *newScene);

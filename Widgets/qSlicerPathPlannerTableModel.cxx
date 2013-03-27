@@ -168,6 +168,7 @@ qSlicerPathPlannerTableModel
   this->selectedPathsTableRow = RESET;
   this->selectedPathsTableColumn = RESET;
   this->pathColumnCounter = 0;
+  //this->pathDistance = 0.0;
 }
 
 qSlicerPathPlannerTableModel
@@ -516,28 +517,14 @@ void qSlicerPathPlannerTableModel
   
   if (d->Scene && d->HierarchyNode)
   {
-    
-    // test code
-    //d->PathsTableModel->targetPointName[d->PathsTableModel->pathColumnCounter] = (char*)malloc(sizeof(char) * 50);
-    //this->targetPointName[this->pathColumnCounter] = (const char*)malloc(sizeof(const char) * 50);
-    //this->targetPointName[0] = (const char*)malloc(sizeof(const char) * 50);
-    //this->targetPointName[0] = "Set Target Point";
-    //this->targetPointName[this->pathColumnCounter] = "Set Target Point";
-    //this->pathColumnCounter++;
-    
-    //QString string;
-    //const char* test[10];
-    //test[0] = "sample";
-    
+        
     // test code
     std::cout << "this->pathColumnCounter = " << this->pathColumnCounter << std::endl;
     this->targetPointName[this->pathColumnCounter] = "Set Target Point";
     this->entryPointName[this->pathColumnCounter] = "Set Entry Point";
+    this->pathDistance[this->pathColumnCounter] = 0.0;
+    
     this->pathColumnCounter++;
-    
-    //string.append(test[0]);    
-    //item->setText(string);
-    
     
     // Generate fiducial point name
     vtkNew<vtkCollection> collection;
@@ -553,11 +540,11 @@ void qSlicerPathPlannerTableModel
     
     tipPosition[0][0] = 0.0;
     tipPosition[0][1] = 0.0;
-    tipPosition[0][2] = 5.0;
+    tipPosition[0][2] = 0.0;
 
     tipPosition[1][0] = 0.0;
     tipPosition[1][1] = 0.0;
-    tipPosition[1][2] = 10.0;
+    tipPosition[1][2] = 0.0;
     
     fid->SetPosition1(tipPosition[0]);
     fid->SetPosition2(tipPosition[1]);
@@ -609,10 +596,6 @@ void qSlicerPathPlannerTableModel
   
   
   // test code
-  //std::cout << "UpdateRulerTable() selectedTargetPointItemRow = " << selectedTargetPointItemRow << std::endl;  
-  //std::cout << "UpdateRulerTable() selectedTargetPointItemColumn = " << selectedTargetPointItemColumn << std::endl;  
-  //std::cout << "UpdateRulerTable() selectedEntryPointItemRow = " << selectedEntryPointItemRow << std::endl;  
-  //std::cout << "UpdateRulerTable() selectedEntryPointItemColumn = " << selectedEntryPointItemColumn << std::endl;  
   std::cout << "updatedRulerTable" << std::endl;  
 
   
@@ -709,56 +692,21 @@ void qSlicerPathPlannerTableModel
         // set tip position
         if(j==0)
         {
-          //str.setNum(fnode->GetFiducialCoordinates()[j]);
-          //str="Set Target";
-          //std::cout << "this->selectedPathsTableColumn = " << this->selectedPathsTableColumn << "," << i << std::endl;            
-          //if(this->selectedPathsTableRow == i && this->selectedTargetPointItemRow != RESET)
-          //{
-            //item->setText(this->targetPointName);
-            //item->setText("Set!!");
-          
-            // test code
-            // read and set the target name
-            
-          //}
-          
-          
-            QString string;
-            string.append(this->targetPointName[i]);
-            item->setText(string);
-            //string.setNum(100);// = this->targetPointName[i];
-            //const char* test[10];
-            //test[0] = "sample";
-            ///string.append(test[0]);
-            
-            //this->targetPointName[i] = "text code";
-            //item->setText(this->targetPointName[i]);
-          ///}else{
-          ///  item->setText("Set Target Point");            
-            //item->setText(this->targetPointName[i]);            
-          ///}
+          QString string;
+          string.append(this->targetPointName[i]);
+          item->setText(string);
         }
         else if(j==1)
         {
-          /*
-          if(this->selectedPathsTableRow == i && this->selectedEntryPointItemRow != RESET)
-          {
-            //item->setText(this->entryPointName);
-            item->setText("Set!!");            
-          }else{
-            item->setText("Set Entry Point");                    
-          }
-          */
-          
           // test code
           QString string;
           string.append(this->entryPointName[i]);
-          item->setText(string);
-          
+          item->setText(string);          
         }
         else if(j==2) 
         { // get distance
-          str.setNum(fnode->GetDistanceMeasurement());          
+          //str.setNum(fnode->GetDistanceMeasurement());          
+          str.setNum(this->pathDistance[i]);          
           item->setText(str);
         }
         else if(j==3)
@@ -965,7 +913,9 @@ void qSlicerPathPlannerTableModel
             // distance  
             case 3:
             {
-              value = qstr.toDouble();
+              //value = qstr.toDouble();
+              this->pathDistance[i] = qstr.toDouble(); 
+              std::cout << "this->pathDistance[i] = "<< this->pathDistance[i] << std::endl;            
               rnode->SetDistanceMeasurement(value);
               break;
             }
@@ -1142,7 +1092,7 @@ void qSlicerPathPlannerTableModel
 
 //------------------------------------------------------------------------------
 void qSlicerPathPlannerTableModel
-::identifyName(int row, int column)
+::identifyTipOfPath(int row, int column)
 {
   Q_D(qSlicerPathPlannerTableModel);
   
@@ -1206,16 +1156,10 @@ void qSlicerPathPlannerTableModel
         item = new QStandardItem();
         this->invisibleRootItem()->setChild(i, 0, item);
       }
-      
-      // identify the name
-      //item->setText(fnode->GetName());
-      //item->setData(fnode->GetID(),qSlicerPathPlannerTableModel::NodeIDRole);
-      
+
       if(i == row)
       {
         this->selectedName = fnode->GetName(); 
-        //this->selectedName = fnode->GetName(); 
-        //this->entryPointName[i] = fnode->GetName(); 
         std::cout << "selectedName = " << this->selectedName << std::endl;  
       }else
       {
@@ -1223,6 +1167,54 @@ void qSlicerPathPlannerTableModel
         std::cout << "item->setText(fnode->GetName()) = " << fnode->GetName() << std::endl;  
       }
 
+      // ----------
+      for (int j = 0; j < 5; j ++)
+      {
+        QStandardItem* item = this->invisibleRootItem()->child(i, j+1);
+        if (item == NULL)
+        {
+          item = new QStandardItem();
+          this->invisibleRootItem()->setChild(i, j+1, item);
+        }
+        QString str;
+        str.setNum(fnode->GetFiducialCoordinates()[j]);
+        if(j<3)
+        {
+          // test code
+          //QByteArray byteArray(str.toAscii());
+          //this->selectedCoordinate[j] = byteArray.constData();
+          this->selectedCoordinate[i][j] = fnode->GetFiducialCoordinates()[j];
+          //item->setText(str);
+        }
+        else if(j==3)
+        {
+          // time stamp for each row
+          if(i == nItems-1 && this->addRowFlag == 1)
+          {
+            QString timeStamp = QTime::currentTime().toString();
+            QByteArray byteArray(timeStamp.toAscii());
+            const char *timeStampStr = byteArray.constData();
+            
+            // test code
+            this->selectedTime = timeStampStr;
+            //item->setText(timeStampStr);                
+          }
+        }
+        else
+        {
+          // memo column for each row
+          if(i == nItems-1 && this->addRowFlag == 1)
+          {
+            item->setText("");                
+          }else
+          {
+             // write memo column reading part
+          }
+            
+        }
+      }
+      // ----------
+      
 
     }
   }
@@ -1230,3 +1222,19 @@ void qSlicerPathPlannerTableModel
 }
 
 
+//------------------------------------------------------------------------------
+void qSlicerPathPlannerTableModel
+::calculatePath(double entryPoint[3], double targetPoint[3], int row)
+{
+  Q_D(qSlicerPathPlannerTableModel);
+
+  double difference[3];
+  
+  // calculate distance
+  difference[0] = entryPoint[0] - targetPoint[0];
+  difference[1] = entryPoint[1] - targetPoint[1];
+  difference[2] = entryPoint[2] - targetPoint[2];    
+  
+  this->pathDistance[row] = sqrt(difference[0]*difference[0]+difference[1]*difference[1]+difference[2]*difference[2]);
+  
+}
